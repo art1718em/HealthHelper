@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">HealthHelper</string>
+    <string name="sign_in_account">Войти в аккаунт</string>
+    <string name="sign_in">Войти</string>
+    <string name="input_login_add_password">Введите логин и пароль</string>
+    <string name="input_email">Введите электронную почту</string>
+    <string name="input_password">Введите пароль</string>
+    <string name="or_sign_up">или зарегистрируйтесь</string>
+    <string name="or_sign_in">или войдите при наличии аккаунта</string>
+    <string name="sign_up">Зарегистироваться</string>
+    <string name="create_account">Создать аккаунт</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="empty_field">Поле не должно пустым</string>
+    <string name="wrong_email">Вы ввели некорректную электронную почту</string>
+    <string name="wrong_password_length">Пароль должен быть не меньше 8 символов</string>
+    <string name="wrong_password_uppercase_letter">Пароль должен содержать хотя бы одну заглавную букву</string>
+    <string name="wrong_password_lowercase_letter">Пароль должен содержать хотя бы одну строчную букву</string>
+    <string name="wrong_password_digital">Пароль должен содержать хотя бы одну цифру</string>
+    <string name="wrong_password_special_symbol">Пароль должен содержать хотя бы один спец символ</string>
+    <string name="wrong_password_comparison">Пароли не совпадают</string>
+    <string name="wrong_fields">Не все поля заполнены корректно</string>
+    <string name="passwords_not_equals">Пароли не совпадают</string>
 </resources>
