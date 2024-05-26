@@ -1,13 +1,14 @@
 package com.example.healthhelper.ui.viewModels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.api.UserApi
+import com.example.healthhelper.data.api.UserAuthenticationApi
+import com.example.healthhelper.ui.screens.login.signIn.SignInScreenUiState
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,62 +17,56 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInScreenViewModel @Inject constructor(
-    private val userApi: UserApi
+    private val userAuthenticationApi: UserAuthenticationApi
 ) : ViewModel() {
 
-    private val _email = MutableStateFlow("");
-    val email = _email.asStateFlow()
+    private val _signInScreenUiState = MutableStateFlow(SignInScreenUiState())
+    val signInScreenUiState = _signInScreenUiState.asStateFlow()
 
-    private val _password = MutableStateFlow("")
-    val password = _password.asStateFlow()
+    private var signInJob: Job? = null
 
-    private val _isEmailCorrect = MutableStateFlow(false)
-    val isEmailCorrect = _isEmailCorrect.asStateFlow()
-
-    private val _isPasswordCorrect = MutableStateFlow(false)
-    val isPasswordCorrect = _isPasswordCorrect.asStateFlow()
-
-    private val _emailErrorMessage = MutableStateFlow("Поле не должно пустым")
-    val emailErrorMessage = _emailErrorMessage.asStateFlow()
-
-    private val _passwordErrorMessage = MutableStateFlow("Поле не должно пустым")
-    val passwordErrorMessage = _passwordErrorMessage.asStateFlow()
-
-    private val _resultOfRequest = MutableStateFlow<ResultOfRequest<FirebaseUser>?>(null)
+    private val _resultOfRequest =
+        MutableStateFlow<ResultOfRequest<FirebaseUser>>(ResultOfRequest.Loading)
     val resultOfRequest = _resultOfRequest.asStateFlow()
 
-    fun updateEmail(email: String, context: Context){
-        _email.value = email
-        _isEmailCorrect.value = checkEmail(email, context)
+    fun updateEmail(email: String) {
+        _signInScreenUiState.value = signInScreenUiState.value.copy(
+            email = email,
+        )
+        checkEmail(email)
     }
 
-    fun updatePassword(password: String, context: Context){
-        _password.value = password
-        _isPasswordCorrect.value = checkPassword(password, context)
+    fun updatePassword(password: String) {
+        _signInScreenUiState.value = signInScreenUiState.value.copy(
+            password = password,
+        )
+        checkPassword(password)
     }
 
-    private fun checkEmail(email: String, context: Context) : Boolean{
+    private fun checkEmail(email: String) {
         val patternEmail = Regex("""^\S+@\S+\.\S+$""")
-        _emailErrorMessage.value = when{
-            email.isEmpty() -> context.getString(R.string.empty_field)
-            !patternEmail.matches(email) -> context.getString(R.string.wrong_email)
-            else -> ""
-        }
-        return _emailErrorMessage.value == ""
+        _signInScreenUiState.value = signInScreenUiState.value.copy(
+            emailErrorMessage = when {
+                email.isEmpty() -> R.string.empty_field
+                !patternEmail.matches(email) -> R.string.wrong_email
+                else -> null
+            }
+        )
     }
 
-    private fun checkPassword(password: String, context: Context) : Boolean{
-        _passwordErrorMessage.value = when{
-            password.isEmpty() ->
-                context.getString(R.string.empty_field)
-            else -> ""
-        }
-        return _passwordErrorMessage.value == ""
+    private fun checkPassword(password: String) {
+        _signInScreenUiState.value = signInScreenUiState.value.copy(
+            passwordErrorMessage = when {
+                password.isEmpty() -> R.string.empty_field
+                else -> null
+            }
+        )
     }
 
-    fun signIn(email: String, password: String){
-        viewModelScope.launch {
-            val result = userApi.signIn(email, password)
+    fun signIn(email: String, password: String) {
+        signInJob?.cancel()
+        signInJob = viewModelScope.launch {
+            val result = userAuthenticationApi.signIn(email, password)
             _resultOfRequest.update { result }
         }
     }
