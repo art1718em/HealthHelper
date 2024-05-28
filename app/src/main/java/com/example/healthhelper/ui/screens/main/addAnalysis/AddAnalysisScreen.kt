@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -34,12 +32,9 @@ import androidx.navigation.NavController
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.Screen
+import com.example.healthhelper.ui.screens.main.DateMaterialDialog
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.time.LocalDate
 
 @Composable
 fun AddAnalysisScreen(
@@ -208,6 +203,10 @@ fun AddAnalysisScreen(
                 )
             },
         )
+        Spacer(
+            modifier = Modifier
+                .height(8.dp),
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -256,38 +255,7 @@ fun AddAnalysisScreen(
             )
         }
     }
-    MaterialDialog(
-        dialogState = dateDialogState,
-        buttons = {
-            positiveButton(
-                text = stringResource(id = R.string.choose),
-                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
-            )
-            negativeButton(
-                text = stringResource(id = R.string.cancel),
-                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
-            )
-        },
-    ) {
-        datepicker(
-            title = stringResource(id = R.string.select_date),
-            initialDate = LocalDate.now(),
-            allowedDateValidator = {
-                it <= LocalDate.now()
-            },
-            colors = DatePickerDefaults.colors(
-                headerBackgroundColor = MaterialTheme.colorScheme.primary,
-                headerTextColor = MaterialTheme.colorScheme.onPrimary,
-                calendarHeaderTextColor = MaterialTheme.colorScheme.primary,
-                dateActiveBackgroundColor = MaterialTheme.colorScheme.primary,
-                dateInactiveBackgroundColor = MaterialTheme.colorScheme.onSecondary,
-                dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
-                dateInactiveTextColor = MaterialTheme.colorScheme.onBackground,
-            ),
-        ) {
-            viewModel.updateDate(it)
-        }
-    }
+    DateMaterialDialog(dateDialogState = dateDialogState, updateData = viewModel::updateDate)
 
     LaunchedEffect(resultOfRequest) {
         when (resultOfRequest) {

@@ -56,4 +56,8 @@
     <string name="input_new_password">Введите новый пароль</string>
     <string name="repeat_new_password">Повторите новый пароль</string>
     <string name="successful_changing_password">Пароль был успешно сменен!</string>
+    <string name="diary_of_well_being">Дневник самочувствия</string>
+    <string name="add_diary_entry">Добавить запись в дневник</string>
+    <string name="input_heading">Введите заголовок</string>
+    <string name="input_diary_entry">Введите запись</string>
 </resources>

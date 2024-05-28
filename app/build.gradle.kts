@@ -58,7 +58,7 @@ dependencies {
     //Navigation Component
     implementation(libs.androidx.navigation.compose)
 
-     //viewModel
+    //viewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     //DI
@@ -68,19 +68,25 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     //FIREBASE
-    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation(platform(libs.firebase.bom))
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-analytics")
 
     //FIREBASE AUTH
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-auth")
 
     //FIREBASE FIRESTORE
+    //noinspection UseTomlInstead
     implementation("com.google.firebase:firebase-firestore")
 
     //Material DatePickerDialog
-    implementation ("io.github.vanpra.compose-material-dialogs:core:0.9.0")
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
-    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:1.1.6")
+    //noinspection UseTomlInstead
+    implementation("io.github.vanpra.compose-material-dialogs:core:0.9.0")
+    //noinspection UseTomlInstead
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    //noinspection UseTomlInstead
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

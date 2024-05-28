@@ -7,6 +7,7 @@ import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAuthenticationApi
 import com.example.healthhelper.ui.screens.main.changePassword.ChangePasswordScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,6 +20,8 @@ class ChangePasswordViewModel @Inject constructor(
 
     private val _changePasswordScreenUiState = MutableStateFlow(ChangePasswordScreenUiState())
     val changePasswordScreenUiState = _changePasswordScreenUiState.asStateFlow()
+
+    private var changingPasswordJob: Job? = null
 
     private val _resultOfChangingPassword =
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
@@ -79,7 +82,8 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     fun changePassword() {
-        viewModelScope.launch {
+        changingPasswordJob?.cancel()
+        changingPasswordJob = viewModelScope.launch {
             _resultOfChangingPassword.value = userAuthenticationApi.changePassword(
                 oldPassword = changePasswordScreenUiState.value.oldPassword,
                 newPassword = changePasswordScreenUiState.value.newPassword,

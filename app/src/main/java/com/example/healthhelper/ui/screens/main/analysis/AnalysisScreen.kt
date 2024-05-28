@@ -142,6 +142,12 @@ fun AnalysisScreen(
                         analysis = analysis,
                     )
                 }
+                item {
+                    Spacer(
+                        modifier = Modifier
+                            .height(56.dp),
+                    )
+                }
             }
         }
 
@@ -158,7 +164,6 @@ fun AnalysisScreen(
                     ).show()
 
                 }
-
 
                 is ResultOfRequest.Loading -> {}
             }
