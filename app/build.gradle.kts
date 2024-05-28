@@ -62,7 +62,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     //DI
-    val hiltVersion = "2.50"
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     kapt(libs.androidx.hilt.compiler)
@@ -79,7 +78,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     //Material DatePickerDialog
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+    implementation ("io.github.vanpra.compose-material-dialogs:core:0.9.0")
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
     coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:1.1.6")
 
     implementation(libs.androidx.core.ktx)

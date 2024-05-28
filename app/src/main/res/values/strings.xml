@@ -47,4 +47,13 @@
     <string name="choose">Выбрать</string>
     <string name="cancel">Отмена</string>
     <string name="app_logo">Логотип приложения</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="your_profile">Ваш профиль</string>
+    <string name="change_password">Сменить пароль</string>
+    <string name="log_out">Выйти из аккаунта</string>
+    <string name="confirm_old_password_and_input_new">Подтвердите старый пароль и введите новый</string>
+    <string name="input_old_password">Введите старый пароль</string>
+    <string name="input_new_password">Введите новый пароль</string>
+    <string name="repeat_new_password">Повторите новый пароль</string>
+    <string name="successful_changing_password">Пароль был успешно сменен!</string>
 </resources>

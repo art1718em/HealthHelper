@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -34,6 +36,7 @@ import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.Screen
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.time.LocalDate
@@ -85,6 +88,14 @@ fun AddAnalysisScreen(
                     text = stringResource(id = R.string.input_analysis_name),
                 )
             },
+            isError = addAnalysisScreenUiState.nameErrorMessage != null,
+            supportingText = {
+                Text(
+                    text = addAnalysisScreenUiState.nameErrorMessage?.let {
+                        stringResource(id = it)
+                    } ?: ""
+                )
+            },
         )
         Spacer(
             modifier = Modifier
@@ -102,6 +113,14 @@ fun AddAnalysisScreen(
             label = {
                 Text(
                     text = stringResource(id = R.string.input_analysis_unit),
+                )
+            },
+            isError = addAnalysisScreenUiState.unitErrorMessage != null,
+            supportingText = {
+                Text(
+                    text = addAnalysisScreenUiState.unitErrorMessage?.let {
+                        stringResource(id = it)
+                    } ?: ""
                 )
             },
         )
@@ -124,6 +143,14 @@ fun AddAnalysisScreen(
                     text = stringResource(id = R.string.input_analysis_result),
                 )
             },
+            isError = addAnalysisScreenUiState.resultErrorMessage != null,
+            supportingText = {
+                Text(
+                    text = addAnalysisScreenUiState.resultErrorMessage?.let {
+                        stringResource(id = it)
+                    } ?: ""
+                )
+            },
         )
         Spacer(
             modifier = Modifier
@@ -144,6 +171,14 @@ fun AddAnalysisScreen(
                     text = stringResource(id = R.string.input_analysis_lower_limit),
                 )
             },
+            isError = addAnalysisScreenUiState.lowerLimitErrorMessage != null,
+            supportingText = {
+                Text(
+                    text = addAnalysisScreenUiState.lowerLimitErrorMessage?.let {
+                        stringResource(id = it)
+                    } ?: ""
+                )
+            },
         )
         Spacer(
             modifier = Modifier
@@ -162,6 +197,14 @@ fun AddAnalysisScreen(
             label = {
                 Text(
                     text = stringResource(id = R.string.input_analysis_upper_limit),
+                )
+            },
+            isError = addAnalysisScreenUiState.upperLimitErrorMessage != null,
+            supportingText = {
+                Text(
+                    text = addAnalysisScreenUiState.upperLimitErrorMessage?.let {
+                        stringResource(id = it)
+                    } ?: ""
                 )
             },
         )
@@ -192,7 +235,20 @@ fun AddAnalysisScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             onClick = {
-                viewModel.addAnalysis()
+                if (addAnalysisScreenUiState.nameErrorMessage == null &&
+                    addAnalysisScreenUiState.unitErrorMessage == null &&
+                    addAnalysisScreenUiState.resultErrorMessage == null &&
+                    addAnalysisScreenUiState.lowerLimitErrorMessage == null &&
+                    addAnalysisScreenUiState.upperLimitErrorMessage == null
+                ) {
+                    viewModel.addAnalysis()
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.wrong_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             },
         ) {
             Text(
@@ -203,15 +259,31 @@ fun AddAnalysisScreen(
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
-            positiveButton(stringResource(id = R.string.choose))
-            negativeButton(stringResource(id = R.string.cancel))
+            positiveButton(
+                text = stringResource(id = R.string.choose),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+            )
+            negativeButton(
+                text = stringResource(id = R.string.cancel),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+            )
         },
     ) {
         datepicker(
+            title = stringResource(id = R.string.select_date),
             initialDate = LocalDate.now(),
             allowedDateValidator = {
                 it <= LocalDate.now()
             },
+            colors = DatePickerDefaults.colors(
+                headerBackgroundColor = MaterialTheme.colorScheme.primary,
+                headerTextColor = MaterialTheme.colorScheme.onPrimary,
+                calendarHeaderTextColor = MaterialTheme.colorScheme.primary,
+                dateActiveBackgroundColor = MaterialTheme.colorScheme.primary,
+                dateInactiveBackgroundColor = MaterialTheme.colorScheme.onSecondary,
+                dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
+                dateInactiveTextColor = MaterialTheme.colorScheme.onBackground,
+            ),
         ) {
             viewModel.updateDate(it)
         }

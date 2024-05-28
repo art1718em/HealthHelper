@@ -33,40 +33,43 @@ class SignInScreenViewModel @Inject constructor(
         _signInScreenUiState.value = signInScreenUiState.value.copy(
             email = email,
         )
-        checkEmail(email)
+        checkEmail()
     }
 
     fun updatePassword(password: String) {
         _signInScreenUiState.value = signInScreenUiState.value.copy(
             password = password,
         )
-        checkPassword(password)
+        checkPassword()
     }
 
-    private fun checkEmail(email: String) {
+    private fun checkEmail() {
         val patternEmail = Regex("""^\S+@\S+\.\S+$""")
         _signInScreenUiState.value = signInScreenUiState.value.copy(
             emailErrorMessage = when {
-                email.isEmpty() -> R.string.empty_field
-                !patternEmail.matches(email) -> R.string.wrong_email
+                signInScreenUiState.value.email.isEmpty() -> R.string.empty_field
+                !patternEmail.matches(signInScreenUiState.value.email) -> R.string.wrong_email
                 else -> null
             }
         )
     }
 
-    private fun checkPassword(password: String) {
+    private fun checkPassword() {
         _signInScreenUiState.value = signInScreenUiState.value.copy(
             passwordErrorMessage = when {
-                password.isEmpty() -> R.string.empty_field
+                signInScreenUiState.value.password.isEmpty() -> R.string.empty_field
                 else -> null
             }
         )
     }
 
-    fun signIn(email: String, password: String) {
+    fun signIn() {
         signInJob?.cancel()
         signInJob = viewModelScope.launch {
-            val result = userAuthenticationApi.signIn(email, password)
+            val result = userAuthenticationApi.signIn(
+                email = signInScreenUiState.value.email,
+                password = signInScreenUiState.value.password,
+            )
             _resultOfRequest.update { result }
         }
     }

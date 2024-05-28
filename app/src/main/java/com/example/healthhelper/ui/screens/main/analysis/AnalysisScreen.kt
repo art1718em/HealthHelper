@@ -150,12 +150,15 @@ fun AnalysisScreen(
                 is ResultOfRequest.Success ->
                     analyzes = resultOfLoadAnalyzes.result
 
-                is ResultOfRequest.Error ->
+                is ResultOfRequest.Error -> {
                     Toast.makeText(
                         context,
                         resultOfLoadAnalyzes.errorMessage,
                         Toast.LENGTH_SHORT
                     ).show()
+
+                }
+
 
                 is ResultOfRequest.Loading -> {}
             }

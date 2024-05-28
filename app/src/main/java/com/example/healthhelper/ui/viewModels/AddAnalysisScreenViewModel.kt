@@ -2,6 +2,7 @@ package com.example.healthhelper.ui.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAnalyzesApi
 import com.example.healthhelper.ui.screens.main.addAnalysis.AddAnalysisScreenUiState
@@ -32,36 +33,86 @@ class AddAnalysisScreenViewModel @Inject constructor(
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             name = name,
         )
+        checkName()
     }
 
     fun updateUnit(unit: String) {
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             unit = unit,
         )
+        checkUnit()
     }
 
     fun updateResult(result: String) {
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             result = result,
         )
+        checkResult()
     }
 
     fun updateLowerLimit(lowerLimit: String) {
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             lowerLimit = lowerLimit,
         )
+        checkLowerLimit()
     }
 
     fun updateUpperLimit(upperLimit: String) {
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             upperLimit = upperLimit,
         )
+        checkUpperLimit()
     }
 
     fun updateDate(date: LocalDate) {
         _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
             pickedDate = date,
             formattedDate = date.toFormattedDate(),
+        )
+    }
+
+    private fun checkName() {
+        _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
+            nameErrorMessage = when {
+                addAnalysisScreenUiState.value.name.isEmpty() -> R.string.empty_field
+                else -> null
+            }
+        )
+    }
+
+    private fun checkUnit() {
+        _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
+            unitErrorMessage = when {
+                addAnalysisScreenUiState.value.unit.isEmpty() -> R.string.empty_field
+                else -> null
+            }
+        )
+    }
+
+    private fun checkResult() {
+        _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
+            resultErrorMessage = when {
+                addAnalysisScreenUiState.value.result.isEmpty() -> R.string.empty_field
+                else -> null
+            }
+        )
+    }
+
+    private fun checkLowerLimit() {
+        _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
+            lowerLimitErrorMessage = when {
+                addAnalysisScreenUiState.value.lowerLimit.isEmpty() -> R.string.empty_field
+                else -> null
+            }
+        )
+    }
+
+    private fun checkUpperLimit() {
+        _addAnalysisScreenUiState.value = addAnalysisScreenUiState.value.copy(
+            upperLimitErrorMessage = when {
+                addAnalysisScreenUiState.value.upperLimit.isEmpty() -> R.string.empty_field
+                else -> null
+            }
         )
     }
 

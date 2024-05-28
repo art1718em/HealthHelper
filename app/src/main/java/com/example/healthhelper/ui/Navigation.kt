@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,10 +26,14 @@ import com.example.healthhelper.ui.screens.Screen
 import com.example.healthhelper.ui.screens.SplashScreen
 import com.example.healthhelper.ui.screens.login.signIn.SignInScreen
 import com.example.healthhelper.ui.screens.login.signUp.SignUpScreen
+import com.example.healthhelper.ui.screens.main.account.AccountScreen
+import com.example.healthhelper.ui.screens.main.changePassword.ChangePasswordScreen
 import com.example.healthhelper.ui.screens.main.addAnalysis.AddAnalysisScreen
 import com.example.healthhelper.ui.screens.main.analysis.AnalysisScreen
+import com.example.healthhelper.ui.viewModels.AccountScreenViewModel
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
+import com.example.healthhelper.ui.viewModels.ChangePasswordViewModel
 import com.example.healthhelper.ui.viewModels.SignInScreenViewModel
 import com.example.healthhelper.ui.viewModels.SignUpScreenViewModel
 import com.example.healthhelper.ui.viewModels.SplashScreenViewModel
@@ -39,6 +44,7 @@ object Navigation {
     const val MAIN_ROUTE = "mainRoute"
     const val SPLASH_ROUTE = "splashRoute"
     private const val ANALYSIS_ROUTE = "analysisRoute"
+    private const val ACCOUNT_ROUTE = "accountRoute"
 
     @Composable
     fun Navigation(
@@ -96,6 +102,7 @@ object Navigation {
             ) {
                 BottomNavigation(
                     analysisScreenViewModel = analysisScreenViewModel,
+                    authNavController = navController,
                 )
             }
         }
@@ -104,6 +111,7 @@ object Navigation {
     @Composable
     fun BottomNavigation(
         analysisScreenViewModel: AnalysisScreenViewModel,
+        authNavController: NavController,
     ) {
         Surface {
             val bottomItems = listOf(
@@ -129,7 +137,6 @@ object Navigation {
                                                 saveState = true
                                             }
                                             launchSingleTop = true
-                                            restoreState = true
                                         }
                                     }
                                 },
@@ -171,6 +178,32 @@ object Navigation {
                             )
                         }
                     }
+                    navigation(
+                        startDestination = Screen.AccountScreen.route,
+                        route = ACCOUNT_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.AccountScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AccountScreenViewModel>()
+                            viewModel.getUserEmail()
+                            AccountScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                onNavigateToAuth = { authNavController.navigate(AUTH_ROUTE) }
+                            )
+                        }
+                        composable(
+                            route = Screen.ChangePasswordScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<ChangePasswordViewModel>()
+                            ChangePasswordScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                    }
+
                 }
             }
         }

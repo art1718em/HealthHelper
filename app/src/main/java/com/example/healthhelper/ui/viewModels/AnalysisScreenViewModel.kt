@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAnalyzesApi
 import com.example.healthhelper.ui.screens.main.analysis.AnalysisUiState
+import com.example.healthhelper.utils.USER_UNAUTHORIZED_ERROR_MESSAGE
 import com.example.healthhelper.utils.toAnalyzesUiStateWithSort
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +25,9 @@ class AnalysisScreenViewModel @Inject constructor(
     fun loadAnalyzes() {
         viewModelScope.launch {
             userAnalyzesApi.getAnalyzes { user ->
-                _resultOfLoadAnalyzes.value =
-                    ResultOfRequest.Success(user!!.analyzes.toAnalyzesUiStateWithSort())
+                _resultOfLoadAnalyzes.value = user?.let {
+                    ResultOfRequest.Success(it.analyzes.toAnalyzesUiStateWithSort())
+                } ?: ResultOfRequest.Error(USER_UNAUTHORIZED_ERROR_MESSAGE)
             }
         }
     }

@@ -139,7 +139,7 @@ fun SignInScreen(
                 if (signInScreenUiState.emailErrorMessage == null
                     && signInScreenUiState.passwordErrorMessage == null
                 ) {
-                    viewModel.signIn(signInScreenUiState.email, signInScreenUiState.password)
+                    viewModel.signIn()
                 } else {
                     Toast.makeText(
                         context,

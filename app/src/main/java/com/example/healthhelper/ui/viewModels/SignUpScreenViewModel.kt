@@ -32,60 +32,83 @@ class SignUpScreenViewModel @Inject constructor(
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
             email = email,
         )
-        checkEmail(email)
+        checkEmail()
     }
 
     fun updatePassword(password: String) {
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
             password = password,
         )
-        checkPassword(password)
+        checkPassword()
+        comparePasswords()
     }
 
-    fun updatePasswordAgain(password: String, passwordAgain: String) {
+    fun updatePasswordAgain(passwordAgain: String) {
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
             passwordAgain = passwordAgain,
         )
-        comparePasswords(password, passwordAgain)
+        comparePasswords()
     }
 
-    private fun checkEmail(email: String) {
+    private fun checkEmail() {
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
             emailErrorMessage = when {
-                email.isEmpty() -> R.string.empty_field
-                !Regex("""^\S+@\S+\.\S+$""").matches(email) -> R.string.wrong_email
+                signUpScreenUiState.value.email.isEmpty() -> R.string.empty_field
+
+                !Regex("""^\S+@\S+\.\S+$""").matches(signUpScreenUiState.value.email) ->
+                    R.string.wrong_email
+
                 else -> null
             }
         )
     }
 
-    private fun checkPassword(password: String) {
+    private fun checkPassword() {
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
             passwordErrorMessage = when {
-                password.isEmpty() -> R.string.empty_field
-                !Regex("""^.{8,}$""").matches(password) -> R.string.wrong_password_length
-                !Regex("""^.*[A-Z].*${'$'}""").matches(password) -> R.string.wrong_password_uppercase_letter
-                !Regex("""^.*[a-z].*${'$'}""").matches(password) -> R.string.wrong_password_lowercase_letter
-                !Regex("""^.*[0-9].*${'$'}""").matches(password) -> R.string.wrong_password_digital
-                !Regex("""^.*[!@#${'$'}%^&*()].*$""").matches(password) -> R.string.wrong_password_special_symbol
+                signUpScreenUiState.value.password.isEmpty() -> R.string.empty_field
+
+                !Regex("""^.{8,}$""").matches(signUpScreenUiState.value.password) ->
+                    R.string.wrong_password_length
+
+                !Regex("""^.*[A-Z].*${'$'}""").matches(signUpScreenUiState.value.password) ->
+                    R.string.wrong_password_uppercase_letter
+
+                !Regex("""^.*[a-z].*${'$'}""").matches(signUpScreenUiState.value.password) ->
+                    R.string.wrong_password_lowercase_letter
+
+                !Regex("""^.*[0-9].*${'$'}""").matches(signUpScreenUiState.value.password) ->
+                    R.string.wrong_password_digital
+
+                !Regex("""^.*[!@#${'$'}%^&*()].*$""")
+                    .matches(signUpScreenUiState.value.password) ->
+                    R.string.wrong_password_special_symbol
+
                 else -> null
             }
         )
     }
 
-    private fun comparePasswords(password: String, passwordAgain: String) {
+    private fun comparePasswords() {
         _signUpScreenUiState.value = signUpScreenUiState.value.copy(
-            passwordAgainErrorMessage = if (password != passwordAgain)
+            passwordAgainErrorMessage = if (
+                signUpScreenUiState.value.password != signUpScreenUiState.value.passwordAgain
+            ) {
                 R.string.passwords_not_equals
-            else
+            } else {
                 null
+            }
+
         )
     }
 
-    fun signUp(email: String, password: String) {
+    fun signUp() {
         signUpJob?.cancel()
         signUpJob = viewModelScope.launch {
-            val result = userAuthenticationApi.signUp(email, password)
+            val result = userAuthenticationApi.signUp(
+                email = signUpScreenUiState.value.email,
+                password = signUpScreenUiState.value.password,
+            )
             if (result is ResultOfRequest.Success) {
                 val user = User()
                 val resultOfSetUser = userAuthenticationApi.setUser(user)
