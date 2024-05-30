@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 object AnalyzesPresenter {
 
-    private val _analysis = MutableStateFlow<Analysis>(Analysis())
+    private val _analysis = MutableStateFlow(Analysis())
     val analysis = _analysis.asStateFlow()
 
     fun setAnalysis(analysis: Analysis) {

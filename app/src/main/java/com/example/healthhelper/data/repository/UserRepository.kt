@@ -33,6 +33,14 @@ class UserRepository @Inject constructor(
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
     val resultOfAddingAnalysis = _resultOfAddingAnalysis.asStateFlow()
 
+    private val _resultOfEditingAnalysis =
+        MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
+    val resultOfEditingAnalysis = _resultOfEditingAnalysis.asStateFlow()
+
+    private val _resultOfDeletionAnalysis =
+        MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
+    val resultOfDeletionAnalysis = _resultOfDeletionAnalysis.asStateFlow()
+
     private val _resultOfAddingDiaryEntry =
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
     val resultOfAddingDiaryEntry = _resultOfAddingDiaryEntry.asStateFlow()
@@ -77,6 +85,51 @@ class UserRepository @Inject constructor(
         }
     }
 
+    suspend fun editAnalysis(analysis: Analysis) {
+        coroutineScope.launch {
+            when (val resultOfEditingAnalysis = userAnalyzesApi.editAnalysis(analysis)) {
+                is ResultOfRequest.Success -> {
+                    val updatedAnalyzes = _analyzes.value.toMutableList()
+                    updatedAnalyzes[analysis.index] = analysis
+                    _analyzes.value = updatedAnalyzes
+                    _resultOfEditingAnalysis.value = ResultOfRequest.Success(Unit)
+                }
+
+                is ResultOfRequest.Error -> {
+                    _resultOfEditingAnalysis.value =
+                        ResultOfRequest.Error(resultOfEditingAnalysis.errorMessage)
+                }
+
+                is ResultOfRequest.Loading -> {}
+            }
+        }
+    }
+
+    suspend fun deleteAnalysis(index: Int) {
+        coroutineScope.launch {
+            when (val resultOfDeletionAnalysis = userAnalyzesApi.deleteAnalysis(index)) {
+                is ResultOfRequest.Success -> {
+                    val updatedAnalyzes = _analyzes.value.toMutableList()
+                    updatedAnalyzes.removeAt(index)
+                    for (i in index..updatedAnalyzes.lastIndex) {
+                        updatedAnalyzes[i] = updatedAnalyzes[i].copy(
+                            index = updatedAnalyzes[i].index - 1
+                        )
+                    }
+                    _analyzes.value = updatedAnalyzes
+                    _resultOfDeletionAnalysis.value = ResultOfRequest.Success(Unit)
+                }
+
+                is ResultOfRequest.Error -> {
+                    _resultOfDeletionAnalysis.value =
+                        ResultOfRequest.Error(resultOfDeletionAnalysis.errorMessage)
+                }
+
+                is ResultOfRequest.Loading -> {}
+            }
+        }
+    }
+
     suspend fun addDiaryEntry(diaryEntry: DiaryEntry) {
         coroutineScope.launch {
             when (val resultOfAddingDiaryEntry = userDiaryApi.addDiaryEntry(diaryEntry)) {
@@ -94,6 +147,7 @@ class UserRepository @Inject constructor(
             }
         }
     }
+
 
     fun clearData() {
         _analyzes.value = emptyList()

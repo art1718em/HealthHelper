@@ -33,6 +33,7 @@ import com.example.healthhelper.ui.screens.main.addDiaryEntry.AddDiaryEntryScree
 import com.example.healthhelper.ui.screens.main.analysis.AnalysisScreen
 import com.example.healthhelper.ui.screens.main.analysisDetails.AnalysisDetailsScreen
 import com.example.healthhelper.ui.screens.main.diary.DiaryScreen
+import com.example.healthhelper.ui.screens.main.editAnalysis.EditAnalysisScreen
 import com.example.healthhelper.ui.viewModels.AccountScreenViewModel
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.AddDiaryEntryScreenViewModel
@@ -40,6 +41,7 @@ import com.example.healthhelper.ui.viewModels.AnalysisDetailsScreenViewModel
 import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.ChangePasswordViewModel
 import com.example.healthhelper.ui.viewModels.DiaryScreenViewModel
+import com.example.healthhelper.ui.viewModels.EditAnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.SignInScreenViewModel
 import com.example.healthhelper.ui.viewModels.SignUpScreenViewModel
 import com.example.healthhelper.ui.viewModels.SplashScreenViewModel
@@ -110,7 +112,7 @@ object Navigation {
     }
 
     @Composable
-    fun BottomNavigation(
+    private fun BottomNavigation(
         authNavController: NavController,
     ) {
 
@@ -183,9 +185,18 @@ object Navigation {
                         }
                         composable(
                             route = Screen.AnalysisDetailsScreen.route,
-                        ){
+                        ) {
                             val viewModel = hiltViewModel<AnalysisDetailsScreenViewModel>()
                             AnalysisDetailsScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.EditAnalysisScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<EditAnalysisScreenViewModel>()
+                            EditAnalysisScreen(
                                 navController = bottomNavController,
                                 viewModel = viewModel,
                             )

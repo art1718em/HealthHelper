@@ -66,4 +66,12 @@
     <string name="lowerLimit">Нижняя граница</string>
     <string name="upperLimit">Верхняя граница</string>
     <string name="date">Дата</string>
+    <string name="save">Сохранить</string>
+    <string name="icon_edit">Иконка редактирования</string>
+    <string name="icon_delete">Иконка удаления</string>
+    <string name="icon_warning">Иконка предупреждения</string>
+    <string name="warning">Предупреждения</string>
+    <string name="want_delete_analysis">Вы точно хотите удалить данный анализ?</string>
+    <string name="successful_deletion_analysis">Анализ успешно удален!</string>
+    <string name="yes">Да</string>
 </resources>
