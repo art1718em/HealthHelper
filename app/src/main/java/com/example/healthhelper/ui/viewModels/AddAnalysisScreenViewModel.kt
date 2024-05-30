@@ -116,9 +116,11 @@ class AddAnalysisScreenViewModel @Inject constructor(
         )
     }
 
-    fun addAnalysis() {
+    fun addAnalysis(index: Int) {
         addingAnalysisJob?.cancel()
-        val analysis = addAnalysisScreenUiState.value.toAnalysis()
+        val analysis = addAnalysisScreenUiState.value.toAnalysis().copy(
+            index = index,
+        )
         addingAnalysisJob = viewModelScope.launch {
             userRepository.addAnalysis(analysis)
             userRepository.resultOfAddingAnalysis.collect {

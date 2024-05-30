@@ -12,10 +12,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +49,7 @@ fun AnalysisScreen(
     viewModel: AnalysisScreenViewModel,
 ) {
 
-    val analyzes by viewModel.analyzes.collectAsState()
+    val analyzes by viewModel.analyzesUiState.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -125,9 +126,12 @@ fun AnalysisScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(analyzes) { analysis ->
+                itemsIndexed(analyzes) { index, analysis ->
                     AnalysisCard(
                         analysis = analysis,
+                        index = index,
+                        addAnalysisToPresenter = viewModel::addAnalysisToPresenter,
+                        navigateToDetails = navController::navigate,
                     )
                 }
                 item {
@@ -141,9 +145,13 @@ fun AnalysisScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisCard(
     analysis: AnalysisUiState,
+    index: Int,
+    addAnalysisToPresenter: (index: Int) -> Unit,
+    navigateToDetails: (route: String) -> Unit,
 ) {
     OutlinedCard(
         colors = CardDefaults.cardColors(
@@ -153,6 +161,10 @@ fun AnalysisCard(
             width = 1.dp,
             color = MaterialTheme.colorScheme.outline,
         ),
+        onClick = {
+            addAnalysisToPresenter(index)
+            navigateToDetails(Screen.AnalysisDetailsScreen.route)
+        }
     ) {
         Row(
             modifier = Modifier

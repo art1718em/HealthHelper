@@ -13,6 +13,7 @@ data class Analysis(
     val lowerLimit: Double = 0.0,
     val upperLimit: Double = 0.0,
     val date: String = "",
+    val index: Int = 0,
 ) {
     fun toAnalysisUiState(): AnalysisUiState {
         val normality = if (result in lowerLimit..upperLimit) {

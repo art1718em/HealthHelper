@@ -60,4 +60,10 @@
     <string name="add_diary_entry">Добавить запись в дневник</string>
     <string name="input_heading">Введите заголовок</string>
     <string name="input_diary_entry">Введите запись</string>
+    <string name="detailed_description">Детальное описание</string>
+    <string name="name">Название</string>
+    <string name="unit">Единица измерения</string>
+    <string name="lowerLimit">Нижняя граница</string>
+    <string name="upperLimit">Верхняя граница</string>
+    <string name="date">Дата</string>
 </resources>

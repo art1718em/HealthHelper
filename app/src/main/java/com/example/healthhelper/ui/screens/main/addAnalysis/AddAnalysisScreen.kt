@@ -34,12 +34,14 @@ import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.Screen
 import com.example.healthhelper.ui.screens.main.DateMaterialDialog
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
+import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 @Composable
 fun AddAnalysisScreen(
     navController: NavController,
     viewModel: AddAnalysisScreenViewModel,
+    analysisScreenViewModel: AnalysisScreenViewModel,
 ) {
 
     val context = LocalContext.current
@@ -240,7 +242,7 @@ fun AddAnalysisScreen(
                     addAnalysisScreenUiState.lowerLimitErrorMessage == null &&
                     addAnalysisScreenUiState.upperLimitErrorMessage == null
                 ) {
-                    viewModel.addAnalysis()
+                    viewModel.addAnalysis(analysisScreenViewModel.getAnalyzesSize())
                 } else {
                     Toast.makeText(
                         context,
