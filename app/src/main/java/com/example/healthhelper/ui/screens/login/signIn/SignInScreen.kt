@@ -32,14 +32,12 @@ import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.Navigation
 import com.example.healthhelper.ui.screens.Screen
-import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.SignInScreenViewModel
 
 @Composable
 fun SignInScreen(
     navController: NavController,
     viewModel: SignInScreenViewModel,
-    analysisScreenViewModel: AnalysisScreenViewModel,
 ) {
 
     val context = LocalContext.current
@@ -198,10 +196,7 @@ fun SignInScreen(
         LaunchedEffect(resultOfRequest) {
             when (resultOfRequest) {
                 is ResultOfRequest.Success -> {
-                    analysisScreenViewModel.loadAnalyzes()
-                    navController.navigate(Navigation.MAIN_ROUTE) {
-                        popUpTo(Navigation.AUTH_ROUTE)
-                    }
+                    viewModel.startLoadingUserData()
                 }
 
                 is ResultOfRequest.Error ->
@@ -212,6 +207,26 @@ fun SignInScreen(
                     ).show()
 
                 is ResultOfRequest.Loading -> {}
+            }
+        }
+
+        LaunchedEffect(viewModel.resultOfLoadingData) {
+            viewModel.resultOfLoadingData.collect { result ->
+                when (result) {
+                    is ResultOfRequest.Success -> {
+                        navController.navigate(Navigation.MAIN_ROUTE) {
+                            popUpTo(Navigation.AUTH_ROUTE)
+                        }
+                    }
+
+                    is ResultOfRequest.Error -> {
+                        navController.navigate(Navigation.MAIN_ROUTE) {
+                            popUpTo(Navigation.AUTH_ROUTE)
+                        }
+                    }
+
+                    ResultOfRequest.Loading -> {}
+                }
             }
         }
     }

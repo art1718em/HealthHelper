@@ -1,7 +1,10 @@
 package com.example.healthhelper.core
 
 import com.example.healthhelper.data.api.UserAnalyzesApi
+import com.example.healthhelper.data.api.UserApi
 import com.example.healthhelper.data.api.UserAuthenticationApi
+import com.example.healthhelper.data.api.UserDiaryApi
+import com.example.healthhelper.data.repository.UserRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -19,11 +22,40 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideUserRepository(
+        userApi: UserApi,
+        userDiaryApi: UserDiaryApi,
+        userAnalyzesApi: UserAnalyzesApi,
+    ): UserRepository {
+        return UserRepository(
+            userApi = userApi,
+            userDiaryApi = userDiaryApi,
+            userAnalyzesApi = userAnalyzesApi,
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideUserAnalyzesApi(
         auth: FirebaseAuth,
         database: FirebaseFirestore,
     ): UserAnalyzesApi {
-        return UserAnalyzesApi(auth, database)
+        return UserAnalyzesApi(
+            auth = auth,
+            database = database,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(
+        auth: FirebaseAuth,
+        database: FirebaseFirestore,
+    ): UserApi {
+        return UserApi(
+            auth = auth,
+            database = database,
+        )
     }
 
     @Provides
@@ -32,7 +64,10 @@ class AppModule {
         auth: FirebaseAuth,
         database: FirebaseFirestore,
     ): UserAuthenticationApi {
-        return UserAuthenticationApi(auth, database)
+        return UserAuthenticationApi(
+            auth = auth,
+            database = database,
+        )
     }
 
     @Provides

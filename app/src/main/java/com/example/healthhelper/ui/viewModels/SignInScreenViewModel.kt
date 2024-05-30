@@ -5,23 +5,28 @@ import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAuthenticationApi
+import com.example.healthhelper.data.repository.UserRepository
 import com.example.healthhelper.ui.screens.login.signIn.SignInScreenUiState
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInScreenViewModel @Inject constructor(
-    private val userAuthenticationApi: UserAuthenticationApi
+    private val userAuthenticationApi: UserAuthenticationApi,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _signInScreenUiState = MutableStateFlow(SignInScreenUiState())
     val signInScreenUiState = _signInScreenUiState.asStateFlow()
+
+    private val _resultOfLoadingData =
+        MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
+    val resultOfLoadingData = _resultOfLoadingData.asStateFlow()
 
     private var signInJob: Job? = null
 
@@ -70,7 +75,16 @@ class SignInScreenViewModel @Inject constructor(
                 email = signInScreenUiState.value.email,
                 password = signInScreenUiState.value.password,
             )
-            _resultOfRequest.update { result }
+            _resultOfRequest.value = result
+        }
+    }
+
+    fun startLoadingUserData() {
+        viewModelScope.launch {
+            userRepository.loadUserData()
+            userRepository.resultOfLoadingData.collect {
+                _resultOfLoadingData.value = it
+            }
         }
     }
 

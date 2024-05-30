@@ -1,7 +1,6 @@
 package com.example.healthhelper.ui.screens.main.diary
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,15 +22,10 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.healthhelper.R
-import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.domain.model.DiaryEntry
 import com.example.healthhelper.ui.screens.Screen
 import com.example.healthhelper.ui.viewModels.DiaryScreenViewModel
@@ -51,15 +44,8 @@ fun DiaryScreen(
     viewModel: DiaryScreenViewModel,
 ) {
 
-    var diaryEntries by remember {
-        mutableStateOf(listOf<DiaryEntry>())
-    }
+    val diaryEntries by viewModel.diaryEntries.collectAsState()
 
-    val context = LocalContext.current
-
-    val resultOfLoadingDiaryEntries = viewModel.resultOfLoadingDiaryEntries.collectAsState().value
-
-    viewModel.loadDiaryEntries()
 
     Scaffold(
         floatingActionButton = {
@@ -108,24 +94,6 @@ fun DiaryScreen(
                             .height(56.dp),
                     )
                 }
-            }
-        }
-
-        LaunchedEffect(resultOfLoadingDiaryEntries) {
-            when (resultOfLoadingDiaryEntries) {
-                is ResultOfRequest.Success ->
-                    diaryEntries = resultOfLoadingDiaryEntries.result
-
-                is ResultOfRequest.Error -> {
-                    Toast.makeText(
-                        context,
-                        resultOfLoadingDiaryEntries.errorMessage,
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                }
-
-                is ResultOfRequest.Loading -> {}
             }
         }
     }

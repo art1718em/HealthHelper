@@ -24,7 +24,7 @@ class UserAnalyzesApi @Inject constructor(
     suspend fun addAnalysis(analysis: Analysis): ResultOfRequest<Unit> {
         val currentUser =
             auth.currentUser ?: return ResultOfRequest.Error(USER_UNAUTHORIZED_ERROR_MESSAGE)
-        val resultOfAddingAnalysis: ResultOfRequest<Unit> = try {
+        return try {
             database
                 .collection(USERS_COLLECTION)
                 .document(currentUser.uid)
@@ -34,6 +34,5 @@ class UserAnalyzesApi @Inject constructor(
         } catch (e: IOException) {
             ResultOfRequest.Error(e.message ?: UNKNOWN_ERROR_MESSAGE)
         }
-        return resultOfAddingAnalysis
     }
 }

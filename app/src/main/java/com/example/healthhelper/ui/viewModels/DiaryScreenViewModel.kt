@@ -2,10 +2,8 @@ package com.example.healthhelper.ui.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.api.UserApi
+import com.example.healthhelper.data.repository.UserRepository
 import com.example.healthhelper.domain.model.DiaryEntry
-import com.example.healthhelper.utils.USER_UNAUTHORIZED_ERROR_MESSAGE
 import com.example.healthhelper.utils.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,21 +13,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryScreenViewModel @Inject constructor(
-    private val userApi: UserApi,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    private val _resultOfLoadingDiaryEntries =
-        MutableStateFlow<ResultOfRequest<List<DiaryEntry>>>(ResultOfRequest.Loading)
-    val resultOfLoadingDiaryEntries = _resultOfLoadingDiaryEntries.asStateFlow()
+    private val _diaryEntries = MutableStateFlow<List<DiaryEntry>>(emptyList())
+    val diaryEntries = _diaryEntries.asStateFlow()
 
-    fun loadDiaryEntries() {
+    init {
         viewModelScope.launch {
-            userApi.getUserData { currentUser ->
-                _resultOfLoadingDiaryEntries.value = currentUser?.let { user ->
-                    ResultOfRequest.Success(user.diaryEntries.sortedByDescending {
-                        it.date.toLocalDate()
-                    })
-                } ?: ResultOfRequest.Error(USER_UNAUTHORIZED_ERROR_MESSAGE)
+            userRepository.diaryEntries.collect { diaryEntries ->
+                _diaryEntries.value = diaryEntries.sortedByDescending { it.date.toLocalDate() }
             }
         }
     }

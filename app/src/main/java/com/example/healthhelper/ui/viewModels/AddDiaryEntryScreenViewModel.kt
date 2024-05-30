@@ -4,8 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.api.UserDiaryApi
-import com.example.healthhelper.domain.model.DiaryEntry
+import com.example.healthhelper.data.repository.UserRepository
 import com.example.healthhelper.ui.screens.main.addDiaryEntry.AddDiaryEntryScreenUiState
 import com.example.healthhelper.utils.toFormattedDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddDiaryEntryScreenViewModel @Inject constructor(
-    private val userDiaryApi: UserDiaryApi,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _addDiaryEntryScreenUiState = MutableStateFlow(AddDiaryEntryScreenUiState())
@@ -71,14 +70,12 @@ class AddDiaryEntryScreenViewModel @Inject constructor(
 
     fun addDiaryEntry() {
         addingDiaryEntryJob?.cancel()
+        val diaryEntry = addDiaryEntryScreenUiState.value.toDiaryEntry()
         addingDiaryEntryJob = viewModelScope.launch {
-            _resultOfAddingDiaryEntry.value = userDiaryApi.addDiaryEntry(
-                DiaryEntry(
-                    heading = addDiaryEntryScreenUiState.value.heading,
-                    description = addDiaryEntryScreenUiState.value.description,
-                    date = addDiaryEntryScreenUiState.value.formattedDate,
-                )
-            )
+            userRepository.addDiaryEntry(diaryEntry)
+            userRepository.resultOfAddingDiaryEntry.collect {
+                _resultOfAddingDiaryEntry.value = it
+            }
         }
     }
 }

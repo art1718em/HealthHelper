@@ -17,7 +17,6 @@ import androidx.navigation.NavController
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.Navigation
-import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.SplashScreenViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +25,6 @@ import kotlinx.coroutines.launch
 fun SplashScreen(
     navController: NavController,
     viewModel: SplashScreenViewModel,
-    analysisScreenViewModel: AnalysisScreenViewModel,
 ) {
 
     val scale = remember {
@@ -52,12 +50,32 @@ fun SplashScreen(
         }
 
         job.join()
-        viewModel.result.collect { result ->
+        viewModel.resultOfCheckingUser.collect { result ->
             navigationFromSplashScreen(
                 resultOfRequest = result,
                 navController = navController,
-                onSuccess = analysisScreenViewModel::loadAnalyzes,
+                onSuccess = viewModel::startLoadingUserData,
             )
+        }
+    }
+
+    LaunchedEffect(viewModel.resultOfLoadingData) {
+        viewModel.resultOfLoadingData.collect { result ->
+            when (result) {
+                is ResultOfRequest.Success -> {
+                    navController.navigate(Navigation.MAIN_ROUTE) {
+                        popUpTo(Navigation.SPLASH_ROUTE)
+                    }
+                }
+
+                is ResultOfRequest.Error -> {
+                    navController.navigate(Navigation.MAIN_ROUTE) {
+                        popUpTo(Navigation.SPLASH_ROUTE)
+                    }
+                }
+
+                ResultOfRequest.Loading -> {}
+            }
         }
     }
 
@@ -84,10 +102,6 @@ fun navigationFromSplashScreen(
     when (resultOfRequest) {
         is ResultOfRequest.Success -> {
             onSuccess()
-            navController.navigate(Navigation.MAIN_ROUTE) {
-                popUpTo(Navigation.SPLASH_ROUTE)
-            }
-
         }
 
         is ResultOfRequest.Error -> navController.navigate(Navigation.AUTH_ROUTE) {

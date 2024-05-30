@@ -52,9 +52,7 @@ object Navigation {
     private const val ACCOUNT_ROUTE = "accountRoute"
 
     @Composable
-    fun Navigation(
-        analysisScreenViewModel: AnalysisScreenViewModel = hiltViewModel()
-    ) {
+    fun Navigation() {
 
         val navController = rememberNavController()
 
@@ -73,7 +71,6 @@ object Navigation {
                     SplashScreen(
                         navController = navController,
                         viewModel = viewModel,
-                        analysisScreenViewModel = analysisScreenViewModel,
                     )
                 }
             }
@@ -88,7 +85,6 @@ object Navigation {
                     SignInScreen(
                         navController = navController,
                         viewModel = viewModel,
-                        analysisScreenViewModel = analysisScreenViewModel,
                     )
                 }
                 composable(
@@ -98,7 +94,6 @@ object Navigation {
                     SignUpScreen(
                         navController = navController,
                         viewModel = viewModel,
-                        analysisScreenViewModel = analysisScreenViewModel,
                     )
                 }
             }
@@ -106,7 +101,6 @@ object Navigation {
                 route = MAIN_ROUTE,
             ) {
                 BottomNavigation(
-                    analysisScreenViewModel = analysisScreenViewModel,
                     authNavController = navController,
                 )
             }
@@ -115,7 +109,6 @@ object Navigation {
 
     @Composable
     fun BottomNavigation(
-        analysisScreenViewModel: AnalysisScreenViewModel,
         authNavController: NavController,
     ) {
         Surface {
@@ -168,9 +161,10 @@ object Navigation {
                         composable(
                             route = Screen.AnalysisScreen.route,
                         ) {
+                            val viewModel = hiltViewModel<AnalysisScreenViewModel>()
                             AnalysisScreen(
                                 navController = bottomNavController,
-                                viewModel = analysisScreenViewModel,
+                                viewModel = viewModel,
                             )
                         }
                         composable(

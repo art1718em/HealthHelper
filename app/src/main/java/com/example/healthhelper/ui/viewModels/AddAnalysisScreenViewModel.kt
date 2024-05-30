@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.api.UserAnalyzesApi
+import com.example.healthhelper.data.repository.UserRepository
 import com.example.healthhelper.ui.screens.main.addAnalysis.AddAnalysisScreenUiState
 import com.example.healthhelper.utils.toFormattedDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddAnalysisScreenViewModel @Inject constructor(
-    private val userAnalyzesApi: UserAnalyzesApi,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     private val _addAnalysisScreenUiState = MutableStateFlow(AddAnalysisScreenUiState())
@@ -120,7 +120,10 @@ class AddAnalysisScreenViewModel @Inject constructor(
         addingAnalysisJob?.cancel()
         val analysis = addAnalysisScreenUiState.value.toAnalysis()
         addingAnalysisJob = viewModelScope.launch {
-            _resultOfAddingAnalysis.value = userAnalyzesApi.addAnalysis(analysis)
+            userRepository.addAnalysis(analysis)
+            userRepository.resultOfAddingAnalysis.collect {
+                _resultOfAddingAnalysis.value = it
+            }
         }
     }
 }
