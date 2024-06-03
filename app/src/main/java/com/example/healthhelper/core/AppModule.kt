@@ -1,9 +1,11 @@
 package com.example.healthhelper.core
 
 import com.example.healthhelper.data.api.UserAnalyzesApi
+import com.example.healthhelper.data.api.UserAppointmentsApi
 import com.example.healthhelper.data.api.UserAuthenticationApi
 import com.example.healthhelper.data.api.UserDiaryApi
 import com.example.healthhelper.data.repository.UserAnalyzesRepository
+import com.example.healthhelper.data.repository.UserAppointmentsRepository
 import com.example.healthhelper.data.repository.UserDiaryRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -32,6 +34,16 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideUserAppointmentsRepository(
+        userAppointmentsApi: UserAppointmentsApi,
+    ): UserAppointmentsRepository {
+        return UserAppointmentsRepository(
+            userAppointmentsApi = userAppointmentsApi,
+        )
+    }
+
+    @Provides
+    @Singleton
     fun provideUserDiaryRepository(
         userDiaryApi: UserDiaryApi,
     ): UserDiaryRepository {
@@ -47,6 +59,18 @@ class AppModule {
         database: FirebaseFirestore,
     ): UserAnalyzesApi {
         return UserAnalyzesApi(
+            auth = auth,
+            database = database,
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserAppointmentsApi(
+        auth: FirebaseAuth,
+        database: FirebaseFirestore,
+    ): UserAppointmentsApi {
+        return UserAppointmentsApi(
             auth = auth,
             database = database,
         )

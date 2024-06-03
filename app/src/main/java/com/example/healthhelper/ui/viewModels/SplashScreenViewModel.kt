@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAuthenticationApi
 import com.example.healthhelper.data.repository.UserAnalyzesRepository
+import com.example.healthhelper.data.repository.UserAppointmentsRepository
 import com.example.healthhelper.data.repository.UserDiaryRepository
 import com.example.healthhelper.utils.LOADING_DATA_ERROR
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ class SplashScreenViewModel @Inject constructor(
     private val userAuthenticationApi: UserAuthenticationApi,
     private val userAnalyzesRepository: UserAnalyzesRepository,
     private val userDiaryRepository: UserDiaryRepository,
+    private val userAppointmentsRepository: UserAppointmentsRepository,
 ) : ViewModel() {
 
     private val _resultOfCheckingUser =
@@ -39,15 +41,22 @@ class SplashScreenViewModel @Inject constructor(
         viewModelScope.launch {
             userAnalyzesRepository.loadUserAnalyzes()
             userDiaryRepository.loadUserDiaryEntries()
+            userAppointmentsRepository.loadUserAppointments()
 
             combine(
                 userAnalyzesRepository.resultOfLoadingAnalyzes,
-                userDiaryRepository.resultOfLoadingDiaryEntries
-            ) { analyzesResult, diaryResult ->
+                userDiaryRepository.resultOfLoadingDiaryEntries,
+                userAppointmentsRepository.resultOfLoadingAppointments,
+            ) { analyzesResult, diaryResult, appointmentsResult ->
                 when {
                     analyzesResult is ResultOfRequest.Error -> ResultOfRequest.Error(analyzesResult.errorMessage)
                     diaryResult is ResultOfRequest.Error -> ResultOfRequest.Error(diaryResult.errorMessage)
-                    analyzesResult is ResultOfRequest.Success && diaryResult is ResultOfRequest.Success -> ResultOfRequest.Success(
+                    appointmentsResult is ResultOfRequest.Error -> ResultOfRequest.Error(
+                        appointmentsResult.errorMessage
+                    )
+
+                    analyzesResult is ResultOfRequest.Success && diaryResult is ResultOfRequest.Success
+                            && appointmentsResult is ResultOfRequest.Success -> ResultOfRequest.Success(
                         Unit
                     )
 

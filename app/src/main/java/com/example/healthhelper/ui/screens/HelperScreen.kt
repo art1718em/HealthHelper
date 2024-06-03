@@ -15,7 +15,10 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 fun DateMaterialDialog(
@@ -49,6 +52,41 @@ fun DateMaterialDialog(
                 dateInactiveBackgroundColor = MaterialTheme.colorScheme.onSecondary,
                 dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
                 dateInactiveTextColor = MaterialTheme.colorScheme.onBackground,
+            ),
+        ) {
+            updateData(it)
+        }
+    }
+}
+
+@Composable
+fun TimeMaterialDialog(
+    timeDialogState: MaterialDialogState,
+    updateData: (localTime: LocalTime) -> Unit,
+) {
+    MaterialDialog(
+        dialogState = timeDialogState,
+        buttons = {
+            positiveButton(
+                text = stringResource(id = R.string.choose),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+            )
+            negativeButton(
+                text = stringResource(id = R.string.cancel),
+                textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
+            )
+        },
+    ) {
+        timepicker(
+            title = stringResource(id = R.string.select_date),
+            is24HourClock = true,
+            colors = TimePickerDefaults.colors(
+                activeBackgroundColor = MaterialTheme.colorScheme.primary,
+                inactiveBackgroundColor = MaterialTheme.colorScheme.onSecondary,
+                activeTextColor = MaterialTheme.colorScheme.onSecondary,
+                inactiveTextColor = MaterialTheme.colorScheme.onBackground,
+                selectorColor = MaterialTheme.colorScheme.primary,
+                selectorTextColor = MaterialTheme.colorScheme.onPrimary,
             ),
         ) {
             updateData(it)

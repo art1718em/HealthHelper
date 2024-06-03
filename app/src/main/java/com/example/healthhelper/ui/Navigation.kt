@@ -29,18 +29,22 @@ import com.example.healthhelper.ui.screens.login.signUp.SignUpScreen
 import com.example.healthhelper.ui.screens.main.account.AccountScreen
 import com.example.healthhelper.ui.screens.main.changePassword.ChangePasswordScreen
 import com.example.healthhelper.ui.screens.main.addAnalysis.AddAnalysisScreen
+import com.example.healthhelper.ui.screens.main.addAppointment.AddAppointmentScreen
 import com.example.healthhelper.ui.screens.main.addDiaryEntry.AddDiaryEntryScreen
 import com.example.healthhelper.ui.screens.main.analysis.AnalysisScreen
 import com.example.healthhelper.ui.screens.main.analysisDetails.AnalysisDetailsScreen
+import com.example.healthhelper.ui.screens.main.appointments.AppointmentsScreen
 import com.example.healthhelper.ui.screens.main.diary.DiaryScreen
 import com.example.healthhelper.ui.screens.main.diaryEntryDetails.DiaryEntryDetailsScreen
 import com.example.healthhelper.ui.screens.main.editAnalysis.EditAnalysisScreen
 import com.example.healthhelper.ui.screens.main.editDiaryEntry.EditDiaryEntryScreen
 import com.example.healthhelper.ui.viewModels.AccountScreenViewModel
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
+import com.example.healthhelper.ui.viewModels.AddAppointmentViewModel
 import com.example.healthhelper.ui.viewModels.AddDiaryEntryScreenViewModel
 import com.example.healthhelper.ui.viewModels.AnalysisDetailsScreenViewModel
 import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
+import com.example.healthhelper.ui.viewModels.AppointmentsScreenViewModel
 import com.example.healthhelper.ui.viewModels.ChangePasswordViewModel
 import com.example.healthhelper.ui.viewModels.DiaryEntryDetailsScreenViewModel
 import com.example.healthhelper.ui.viewModels.DiaryScreenViewModel
@@ -56,6 +60,7 @@ object Navigation {
     const val MAIN_ROUTE = "mainRoute"
     const val SPLASH_ROUTE = "splashRoute"
     private const val ANALYSIS_ROUTE = "analysisRoute"
+    private const val APPOINTMENT_ROUTE = "appointmentRoute"
     private const val DIARY_ROUTE = "diaryRoute"
     private const val ACCOUNT_ROUTE = "accountRoute"
 
@@ -121,6 +126,7 @@ object Navigation {
     ) {
 
         val analysisScreenViewModel = hiltViewModel<AnalysisScreenViewModel>()
+        val appointmentScreenViewModel = hiltViewModel<AppointmentsScreenViewModel>()
         val diaryScreenViewModel = hiltViewModel<DiaryScreenViewModel>()
 
         Surface {
@@ -204,6 +210,29 @@ object Navigation {
                             EditAnalysisScreen(
                                 navController = bottomNavController,
                                 viewModel = viewModel,
+                            )
+                        }
+                    }
+                    navigation(
+                        startDestination = Screen.AppointmentScreen.route,
+                        route = APPOINTMENT_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.AppointmentScreen.route,
+                        ) {
+                            AppointmentsScreen(
+                                navController = bottomNavController,
+                                viewModel = appointmentScreenViewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.AddAppointmentScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AddAppointmentViewModel>()
+                            AddAppointmentScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                appointmentViewModel = appointmentScreenViewModel,
                             )
                         }
                     }

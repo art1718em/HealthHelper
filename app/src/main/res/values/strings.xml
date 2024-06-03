@@ -80,4 +80,10 @@
     <string name="successful_deletion_diary_entry">Запись дневника успешно удалена!</string>
     <string name="change_analysis">Изменить анализ</string>
     <string name="change_diary_entry">Изменить запись дневника</string>
+    <string name="doctor_appointments">Приемы врачей</string>
+    <string name="add_appointment">Добавить прием врача</string>
+    <string name="input_doctor_speciality">Введите специализацию врача</string>
+    <string name="input_doctor_name">Введите ФИО врача</string>
+    <string name="input_address">Введите адрес клиники</string>
+    <string name="icon_watch">Иконка часов</string>
 </resources>
