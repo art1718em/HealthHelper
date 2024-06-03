@@ -4,7 +4,7 @@ import com.example.healthhelper.domain.model.Analysis
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-object AnalyzesPresenter {
+object AnalyzesProvider {
 
     private val _analysis = MutableStateFlow(Analysis())
     val analysis = _analysis.asStateFlow()

@@ -24,6 +24,23 @@ class UserAnalyzesApi @Inject constructor(
         private const val ANALYSIS_USER_FIELD = "analyzes"
     }
 
+    suspend fun loadUserAnalyzes(): ResultOfRequest<List<Analysis>> {
+        val currentUser =
+            auth.currentUser ?: return ResultOfRequest.Error(USER_UNAUTHORIZED_ERROR_MESSAGE)
+        return try {
+            val user = database
+                .collection(USERS_COLLECTION)
+                .document(currentUser.uid)
+                .get()
+                .await()
+                .toObject<User>()
+                ?.analyzes ?: return ResultOfRequest.Error(NULL_USER_ERROR_MESSAGE)
+            ResultOfRequest.Success(user)
+        } catch (e: Exception) {
+            ResultOfRequest.Error(e.message ?: UNKNOWN_ERROR_MESSAGE)
+        }
+    }
+
     suspend fun addAnalysis(analysis: Analysis): ResultOfRequest<Unit> {
         val currentUser =
             auth.currentUser ?: return ResultOfRequest.Error(USER_UNAUTHORIZED_ERROR_MESSAGE)

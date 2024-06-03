@@ -74,4 +74,10 @@
     <string name="want_delete_analysis">Вы точно хотите удалить данный анализ?</string>
     <string name="successful_deletion_analysis">Анализ успешно удален!</string>
     <string name="yes">Да</string>
+    <string name="heading">Заголовок</string>
+    <string name="diary_entry">Запись</string>
+    <string name="want_delete_diary_entry">Вы точно хотите удалить данную запись?</string>
+    <string name="successful_deletion_diary_entry">Запись дневника успешно удалена!</string>
+    <string name="change_analysis">Изменить анализ</string>
+    <string name="change_diary_entry">Изменить запись дневника</string>
 </resources>

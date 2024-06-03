@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.Screen
-import com.example.healthhelper.ui.screens.main.DateMaterialDialog
+import com.example.healthhelper.ui.screens.DateMaterialDialog
 import com.example.healthhelper.ui.viewModels.AddAnalysisScreenViewModel
 import com.example.healthhelper.ui.viewModels.AnalysisScreenViewModel
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState

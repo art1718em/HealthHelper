@@ -1,4 +1,4 @@
-package com.example.healthhelper.ui.screens.main.addDiaryEntry
+package com.example.healthhelper.ui.screens.main.editDiaryEntry
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -29,26 +29,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.ui.screens.Screen
 import com.example.healthhelper.ui.screens.DateMaterialDialog
-import com.example.healthhelper.ui.viewModels.AddDiaryEntryScreenViewModel
-import com.example.healthhelper.ui.viewModels.DiaryScreenViewModel
+import com.example.healthhelper.ui.screens.Screen
+import com.example.healthhelper.ui.viewModels.EditDiaryEntryScreenViewModel
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 @Composable
-fun AddDiaryEntryScreen(
+fun EditDiaryEntryScreen(
     navController: NavController,
-    viewModel: AddDiaryEntryScreenViewModel,
-    diaryScreenViewModel: DiaryScreenViewModel,
+    viewModel: EditDiaryEntryScreenViewModel,
 ) {
-
     val addDiaryEntryScreenUiState by viewModel.addDiaryEntryScreenUiState.collectAsState()
 
     val context = LocalContext.current
 
     val dateDialogState = rememberMaterialDialogState()
 
-    val resultOfAddingDiaryEntry = viewModel.resultOfAddingDiaryEntry.collectAsState().value
+    val resultOfEditingDiaryEntry = viewModel.resultOfEditingDiaryEntry.collectAsState().value
 
     Column(
         modifier = Modifier
@@ -61,7 +58,7 @@ fun AddDiaryEntryScreen(
                 .height(16.dp)
         )
         Text(
-            text = stringResource(id = R.string.add_diary_entry),
+            text = stringResource(id = R.string.change_diary_entry),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
         )
@@ -149,7 +146,7 @@ fun AddDiaryEntryScreen(
                 if (addDiaryEntryScreenUiState.headingErrorMessage == null &&
                     addDiaryEntryScreenUiState.descriptionErrorMessage == null
                 ) {
-                    viewModel.addDiaryEntry(diaryScreenViewModel.getAnalyzesSize())
+                    viewModel.editDiaryEntry()
                 } else {
                     Toast.makeText(
                         context,
@@ -160,7 +157,7 @@ fun AddDiaryEntryScreen(
             },
         ) {
             Text(
-                text = stringResource(id = R.string.add),
+                text = stringResource(id = R.string.save),
             )
         }
         DateMaterialDialog(
@@ -169,16 +166,16 @@ fun AddDiaryEntryScreen(
         )
     }
 
-    LaunchedEffect(resultOfAddingDiaryEntry) {
-        when (resultOfAddingDiaryEntry) {
+    LaunchedEffect(resultOfEditingDiaryEntry) {
+        when (resultOfEditingDiaryEntry) {
             is ResultOfRequest.Success<Unit> -> {
-                navController.navigate(Screen.DiaryScreen.route)
+                navController.navigate(Screen.DiaryEntryDetailsScreen.route)
             }
 
             is ResultOfRequest.Error -> {
                 Toast.makeText(
                     context,
-                    resultOfAddingDiaryEntry.errorMessage,
+                    resultOfEditingDiaryEntry.errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
             }

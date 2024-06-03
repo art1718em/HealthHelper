@@ -3,9 +3,9 @@ package com.example.healthhelper.ui.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.repository.UserRepository
+import com.example.healthhelper.data.repository.UserAnalyzesRepository
 import com.example.healthhelper.domain.model.Analysis
-import com.example.healthhelper.presenter.AnalyzesPresenter
+import com.example.healthhelper.presenter.AnalyzesProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnalysisDetailsScreenViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val userAnalyzesRepository: UserAnalyzesRepository,
 ) : ViewModel() {
 
     private val _analysis = MutableStateFlow(Analysis())
@@ -29,7 +29,7 @@ class AnalysisDetailsScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            AnalyzesPresenter.analysis.collect {
+            AnalyzesProvider.analysis.collect {
                 _analysis.value = it
             }
         }
@@ -38,11 +38,10 @@ class AnalysisDetailsScreenViewModel @Inject constructor(
     fun deleteAnalysis() {
         deletionAnalysisJob?.cancel()
         deletionAnalysisJob = viewModelScope.launch {
-            userRepository.deleteAnalysis(analysis.value.index)
-            userRepository.resultOfDeletionAnalysis.collect {
+            userAnalyzesRepository.deleteAnalysis(analysis.value.index)
+            userAnalyzesRepository.resultOfDeletionAnalysis.collect {
                 _resultOfDeletionAnalysis.value = it
             }
         }
     }
-
 }

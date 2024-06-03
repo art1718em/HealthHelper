@@ -1,4 +1,4 @@
-package com.example.healthhelper.ui.screens.main
+package com.example.healthhelper.ui.screens
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning

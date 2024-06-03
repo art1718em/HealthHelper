@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.Screen
-import com.example.healthhelper.ui.screens.main.DateMaterialDialog
+import com.example.healthhelper.ui.screens.DateMaterialDialog
 import com.example.healthhelper.ui.viewModels.EditAnalysisScreenViewModel
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
@@ -60,7 +60,7 @@ fun EditAnalysisScreen(
                 .height(16.dp),
         )
         Text(
-            text = stringResource(id = R.string.add_analysis),
+            text = stringResource(id = R.string.change_analysis),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
         )

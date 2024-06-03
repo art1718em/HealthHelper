@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +45,7 @@ fun DiaryScreen(
     viewModel: DiaryScreenViewModel,
 ) {
 
-    val diaryEntries by viewModel.diaryEntries.collectAsState()
+    val diaryEntries by viewModel.diaryEntryUiState.collectAsState()
 
 
     Scaffold(
@@ -83,9 +84,12 @@ fun DiaryScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                items(diaryEntries) { diaryEntry ->
+                itemsIndexed(diaryEntries) { index, diaryEntry ->
                     DiaryCard(
                         diaryEntry = diaryEntry,
+                        index = index,
+                        addDiaryEntryToPresenter = viewModel::addDiaryEntryToPresenter,
+                        navigateToDetails = navController::navigate,
                     )
                 }
                 item {
@@ -99,9 +103,13 @@ fun DiaryScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiaryCard(
     diaryEntry: DiaryEntry,
+    index: Int,
+    addDiaryEntryToPresenter: (index: Int) -> Unit,
+    navigateToDetails: (route: String) -> Unit,
 ) {
     OutlinedCard(
         colors = CardDefaults.cardColors(
@@ -111,6 +119,10 @@ fun DiaryCard(
             width = 1.dp,
             color = MaterialTheme.colorScheme.outline,
         ),
+        onClick = {
+            addDiaryEntryToPresenter(index)
+            navigateToDetails(Screen.DiaryEntryDetailsScreen.route)
+        }
     ) {
         Row(
             modifier = Modifier

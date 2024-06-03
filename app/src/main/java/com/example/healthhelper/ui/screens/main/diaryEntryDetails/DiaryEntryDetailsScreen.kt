@@ -1,4 +1,4 @@
-package com.example.healthhelper.ui.screens.main.analysisDetails
+package com.example.healthhelper.ui.screens.main.diaryEntryDetails
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -40,20 +40,19 @@ import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.AlertDialogWarning
 import com.example.healthhelper.ui.screens.Screen
-import com.example.healthhelper.ui.viewModels.AnalysisDetailsScreenViewModel
+import com.example.healthhelper.ui.viewModels.DiaryEntryDetailsScreenViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AnalysisDetailsScreen(
+fun DiaryEntryDetailsScreen(
     navController: NavController,
-    viewModel: AnalysisDetailsScreenViewModel,
+    viewModel: DiaryEntryDetailsScreenViewModel,
 ) {
-
     val context = LocalContext.current
 
-    val analysis by viewModel.analysis.collectAsState()
+    val diaryEntry by viewModel.diaryEntry.collectAsState()
 
-    val resultOfDeletionAnalysis = viewModel.resultOfDeletionAnalysis.collectAsState().value
+    val resultOfDeletionDiaryEntry = viewModel.resultOfDeletionDiaryEntry.collectAsState().value
 
     var openAlertDialog by remember {
         mutableStateOf(false)
@@ -63,7 +62,7 @@ fun AnalysisDetailsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.EditAnalysisScreen.route)
+                    navController.navigate(Screen.EditDiaryEntryScreen.route)
                 },
             ) {
                 Icon(
@@ -129,12 +128,12 @@ fun AnalysisDetailsScreen(
                         Text(
                             modifier = Modifier
                                 .padding(end = 8.dp),
-                            text = stringResource(id = R.string.name),
+                            text = stringResource(id = R.string.heading),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = analysis.name,
+                            text = diaryEntry.heading,
                             fontSize = 20.sp,
                         )
                     }
@@ -149,72 +148,12 @@ fun AnalysisDetailsScreen(
                         Text(
                             modifier = Modifier
                                 .padding(end = 8.dp),
-                            text = stringResource(id = R.string.unit),
+                            text = stringResource(id = R.string.diary_entry),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = analysis.unit,
-                            fontSize = 20.sp,
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.result),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = analysis.result.toString(),
-                            fontSize = 20.sp,
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.lowerLimit),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = analysis.lowerLimit.toString(),
-                            fontSize = 20.sp,
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.upperLimit),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = analysis.upperLimit.toString(),
+                            text = diaryEntry.description,
                             fontSize = 20.sp,
                         )
                     }
@@ -234,7 +173,7 @@ fun AnalysisDetailsScreen(
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
-                            text = analysis.date,
+                            text = diaryEntry.date,
                             fontSize = 20.sp,
                         )
                     }
@@ -246,28 +185,28 @@ fun AnalysisDetailsScreen(
                     onDismissRequest = { openAlertDialog = false },
                     onConfirmation = {
                         openAlertDialog = false
-                        viewModel.deleteAnalysis()
+                        viewModel.deleteDiaryEntry()
                     },
                     dialogTitle = stringResource(id = R.string.warning),
-                    dialogText = stringResource(id = R.string.want_delete_analysis),
+                    dialogText = stringResource(id = R.string.want_delete_diary_entry),
                 )
             }
 
-            LaunchedEffect(resultOfDeletionAnalysis) {
-                when (resultOfDeletionAnalysis) {
+            LaunchedEffect(resultOfDeletionDiaryEntry) {
+                when (resultOfDeletionDiaryEntry) {
                     is ResultOfRequest.Success<Unit> -> {
                         Toast.makeText(
                             context,
-                            context.getString(R.string.successful_deletion_analysis),
+                            context.getString(R.string.successful_deletion_diary_entry),
                             Toast.LENGTH_SHORT
                         ).show()
-                        navController.navigate(Screen.AnalysisScreen.route)
+                        navController.navigate(Screen.DiaryScreen.route)
                     }
 
                     is ResultOfRequest.Error -> {
                         Toast.makeText(
                             context,
-                            resultOfDeletionAnalysis.errorMessage,
+                            resultOfDeletionDiaryEntry.errorMessage,
                             Toast.LENGTH_SHORT
                         ).show()
                     }

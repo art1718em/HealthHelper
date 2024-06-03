@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.repository.UserDiaryRepository
+import com.example.healthhelper.domain.model.DiaryEntry
+import com.example.healthhelper.presenter.DiaryProvider
 import com.example.healthhelper.ui.screens.main.addDiaryEntry.AddDiaryEntryScreenUiState
 import com.example.healthhelper.utils.toFormattedDate
+import com.example.healthhelper.utils.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,18 +19,37 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class AddDiaryEntryScreenViewModel @Inject constructor(
+class EditDiaryEntryScreenViewModel @Inject constructor(
     private val userDiaryRepository: UserDiaryRepository,
 ) : ViewModel() {
 
     private val _addDiaryEntryScreenUiState = MutableStateFlow(AddDiaryEntryScreenUiState())
     val addDiaryEntryScreenUiState = _addDiaryEntryScreenUiState.asStateFlow()
 
-    private var addingDiaryEntryJob: Job? = null
+    private var editingDiaryEntryJob: Job? = null
 
-    private val _resultOfAddingDiaryEntry =
+    private val _diaryEntry = MutableStateFlow(DiaryEntry())
+    private val diaryEntry = _diaryEntry.asStateFlow()
+
+    private val _resultOfEditingDiaryEntry =
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
-    val resultOfAddingDiaryEntry = _resultOfAddingDiaryEntry.asStateFlow()
+    val resultOfEditingDiaryEntry = _resultOfEditingDiaryEntry.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            DiaryProvider.diaryEntry.collect {
+                _diaryEntry.value = it
+                _addDiaryEntryScreenUiState.value = AddDiaryEntryScreenUiState(
+                    heading = diaryEntry.value.heading,
+                    description = diaryEntry.value.description,
+                    pickedDate = diaryEntry.value.date.toLocalDate(),
+                    formattedDate = diaryEntry.value.date,
+                    headingErrorMessage = null,
+                    descriptionErrorMessage = null,
+                )
+            }
+        }
+    }
 
     fun updateHeading(heading: String) {
         _addDiaryEntryScreenUiState.value = addDiaryEntryScreenUiState.value.copy(
@@ -68,15 +90,18 @@ class AddDiaryEntryScreenViewModel @Inject constructor(
         )
     }
 
-    fun addDiaryEntry(index: Int) {
-        addingDiaryEntryJob?.cancel()
-        val diaryEntry = addDiaryEntryScreenUiState.value.toDiaryEntry().copy(
-            index = index,
+    fun editDiaryEntry() {
+        editingDiaryEntryJob?.cancel()
+        val updatedDiaryEntry = addDiaryEntryScreenUiState.value.toDiaryEntry().copy(
+            index = diaryEntry.value.index,
         )
-        addingDiaryEntryJob = viewModelScope.launch {
-            userDiaryRepository.addDiaryEntry(diaryEntry)
-            userDiaryRepository.resultOfAddingDiaryEntry.collect {
-                _resultOfAddingDiaryEntry.value = it
+        editingDiaryEntryJob = viewModelScope.launch {
+            userDiaryRepository.editDiaryEntry(updatedDiaryEntry)
+            userDiaryRepository.resultOfEditingDiaryEntry.collect {
+                _resultOfEditingDiaryEntry.value = it
+                if (it is ResultOfRequest.Success) {
+                    DiaryProvider.setDiaryEntry(updatedDiaryEntry)
+                }
             }
         }
     }

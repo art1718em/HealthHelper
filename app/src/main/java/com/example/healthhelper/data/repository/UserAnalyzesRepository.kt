@@ -2,10 +2,7 @@ package com.example.healthhelper.data.repository
 
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAnalyzesApi
-import com.example.healthhelper.data.api.UserApi
-import com.example.healthhelper.data.api.UserDiaryApi
 import com.example.healthhelper.domain.model.Analysis
-import com.example.healthhelper.domain.model.DiaryEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,20 +11,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class UserRepository @Inject constructor(
-    private val userApi: UserApi,
-    private val userDiaryApi: UserDiaryApi,
+class UserAnalyzesRepository @Inject constructor(
     private val userAnalyzesApi: UserAnalyzesApi,
 ) {
+
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + Job())
+
     private val _analyzes = MutableStateFlow<List<Analysis>>(emptyList())
     val analyzes = _analyzes.asStateFlow()
 
-    private val _diaryEntries = MutableStateFlow<List<DiaryEntry>>(emptyList())
-    val diaryEntries = _diaryEntries.asStateFlow()
-
-    private val _resultOfLoadingData =
+    private val _resultOfLoadingAnalyzes =
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
-    val resultOfLoadingData = _resultOfLoadingData.asStateFlow()
+    val resultOfLoadingAnalyzes = _resultOfLoadingAnalyzes.asStateFlow()
 
     private val _resultOfAddingAnalysis =
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
@@ -41,29 +36,19 @@ class UserRepository @Inject constructor(
         MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
     val resultOfDeletionAnalysis = _resultOfDeletionAnalysis.asStateFlow()
 
-    private val _resultOfAddingDiaryEntry =
-        MutableStateFlow<ResultOfRequest<Unit>>(ResultOfRequest.Loading)
-    val resultOfAddingDiaryEntry = _resultOfAddingDiaryEntry.asStateFlow()
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + Job())
-
-
-    suspend fun loadUserData() {
-        coroutineScope.launch {
-            when (val resultOfLoadData = userApi.loadUserData()) {
-                is ResultOfRequest.Success -> {
-                    _analyzes.value = resultOfLoadData.result.analyzes
-                    _diaryEntries.value = resultOfLoadData.result.diaryEntries
-                    _resultOfLoadingData.value = ResultOfRequest.Success(Unit)
-                }
-
-                is ResultOfRequest.Error -> {
-                    _resultOfLoadingData.value =
-                        ResultOfRequest.Error(resultOfLoadData.errorMessage)
-                }
-
-                is ResultOfRequest.Loading -> {}
+    suspend fun loadUserAnalyzes() {
+        when (val resultOfLoadData = userAnalyzesApi.loadUserAnalyzes()) {
+            is ResultOfRequest.Success -> {
+                _analyzes.value = resultOfLoadData.result
+                _resultOfLoadingAnalyzes.value = ResultOfRequest.Success(Unit)
             }
+
+            is ResultOfRequest.Error -> {
+                _resultOfLoadingAnalyzes.value =
+                    ResultOfRequest.Error(resultOfLoadData.errorMessage)
+            }
+
+            is ResultOfRequest.Loading -> {}
         }
     }
 
@@ -130,28 +115,7 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun addDiaryEntry(diaryEntry: DiaryEntry) {
-        coroutineScope.launch {
-            when (val resultOfAddingDiaryEntry = userDiaryApi.addDiaryEntry(diaryEntry)) {
-                is ResultOfRequest.Success -> {
-                    _diaryEntries.value = diaryEntries.value.plus(diaryEntry)
-                    _resultOfAddingDiaryEntry.value = ResultOfRequest.Success(Unit)
-                }
-
-                is ResultOfRequest.Error -> {
-                    _resultOfAddingDiaryEntry.value =
-                        ResultOfRequest.Error(resultOfAddingDiaryEntry.errorMessage)
-                }
-
-                is ResultOfRequest.Loading -> {}
-            }
-        }
-    }
-
-
     fun clearData() {
         _analyzes.value = emptyList()
-        _diaryEntries.value = emptyList()
     }
-
 }

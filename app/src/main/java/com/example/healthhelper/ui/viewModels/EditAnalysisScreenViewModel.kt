@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
-import com.example.healthhelper.data.repository.UserRepository
+import com.example.healthhelper.data.repository.UserAnalyzesRepository
 import com.example.healthhelper.domain.model.Analysis
-import com.example.healthhelper.presenter.AnalyzesPresenter
+import com.example.healthhelper.presenter.AnalyzesProvider
 import com.example.healthhelper.ui.screens.main.addAnalysis.AddAnalysisScreenUiState
 import com.example.healthhelper.utils.toFormattedDate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditAnalysisScreenViewModel @Inject constructor(
-    private val userRepository: UserRepository,
+    private val userAnalyzesRepository: UserAnalyzesRepository,
 ) : ViewModel() {
 
     private val _addAnalysisScreenUiState = MutableStateFlow(AddAnalysisScreenUiState())
@@ -36,7 +36,7 @@ class EditAnalysisScreenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            AnalyzesPresenter.analysis.collect {
+            AnalyzesProvider.analysis.collect {
                 _analysis.value = it
                 _addAnalysisScreenUiState.value = AddAnalysisScreenUiState(
                     name = analysis.value.name,
@@ -148,14 +148,13 @@ class EditAnalysisScreenViewModel @Inject constructor(
             index = analysis.value.index,
         )
         editingAnalysisJob = viewModelScope.launch {
-            userRepository.editAnalysis(updatedAnalysis)
-            userRepository.resultOfEditingAnalysis.collect {
+            userAnalyzesRepository.editAnalysis(updatedAnalysis)
+            userAnalyzesRepository.resultOfEditingAnalysis.collect {
                 _resultOfEditingAnalysis.value = it
                 if (it is ResultOfRequest.Success) {
-                    AnalyzesPresenter.setAnalysis(updatedAnalysis)
+                    AnalyzesProvider.setAnalysis(updatedAnalysis)
                 }
             }
         }
-
     }
 }

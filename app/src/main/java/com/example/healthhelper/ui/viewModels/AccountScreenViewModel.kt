@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.data.api.UserAuthenticationApi
-import com.example.healthhelper.data.repository.UserRepository
+import com.example.healthhelper.data.repository.UserAnalyzesRepository
+import com.example.healthhelper.data.repository.UserDiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountScreenViewModel @Inject constructor(
     private val userAuthenticationApi: UserAuthenticationApi,
-    private val userRepository: UserRepository,
+    private val userAnalyzesRepository: UserAnalyzesRepository,
+    private val userDiaryRepository: UserDiaryRepository,
 ) : ViewModel() {
 
     private val _userEmail = MutableStateFlow<String?>(null)
@@ -40,7 +42,8 @@ class AccountScreenViewModel @Inject constructor(
         logOutJob = viewModelScope.launch {
             _resultOfLogOut.value = userAuthenticationApi.logOut()
             if (_resultOfLogOut.value is ResultOfRequest.Success) {
-                userRepository.clearData()
+                userAnalyzesRepository.clearData()
+                userDiaryRepository.clearData()
             }
         }
     }
