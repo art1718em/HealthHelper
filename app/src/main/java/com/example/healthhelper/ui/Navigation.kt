@@ -1,6 +1,5 @@
 package com.example.healthhelper.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -11,17 +10,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.healthhelper.R
@@ -66,6 +63,10 @@ object Navigation {
     const val AUTH_ROUTE = "authRoute"
     const val MAIN_ROUTE = "mainRoute"
     const val SPLASH_ROUTE = "splashRoute"
+    private const val ANALYSIS_ROUTE = "analysisRoute"
+    private const val APPOINTMENT_ROUTE = "appointmentRoute"
+    private const val DIARY_ROUTE = "diaryRoute"
+    private const val ACCOUNT_ROUTE = "accountRoute"
 
     @Composable
     fun Navigation() {
@@ -124,33 +125,40 @@ object Navigation {
     }
 
     @Composable
-    fun BottomNavigation(
+    private fun BottomNavigation(
         authNavController: NavController,
     ) {
-        val analysisNavController = rememberNavController()
-        val appointmentNavController = rememberNavController()
-        val diaryNavController = rememberNavController()
-        val accountNavController = rememberNavController()
-        val bottomItems = listOf(
-            Screen.AnalysisScreen.route,
-            Screen.AppointmentScreen.route,
-            Screen.DiaryScreen.route,
-            Screen.AccountScreen.route,
-        )
 
-
-
-        val currentTab = remember { mutableStateOf(Screen.AnalysisScreen.route) }
+        val analysisScreenViewModel = hiltViewModel<AnalysisScreenViewModel>()
+        val appointmentScreenViewModel = hiltViewModel<AppointmentsScreenViewModel>()
+        val diaryScreenViewModel = hiltViewModel<DiaryScreenViewModel>()
 
         Surface {
+            val bottomItems = listOf(
+                Screen.AnalysisScreen.route,
+                Screen.AppointmentScreen.route,
+                Screen.DiaryScreen.route,
+                Screen.AccountScreen.route,
+            )
+            val bottomNavController = rememberNavController()
+
             Scaffold(
                 bottomBar = {
                     BottomAppBar {
+                        val currentRoute =
+                            bottomNavController.currentBackStackEntryAsState().value?.destination?.route
                         bottomItems.forEach { route ->
                             NavigationBarItem(
-                                selected = currentTab.value == route,
+                                selected = currentRoute == route,
                                 onClick = {
-                                    currentTab.value = route
+                                    if (currentRoute != route) {
+                                        bottomNavController.navigate(route) {
+                                            popUpTo(bottomNavController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                    }
                                 },
                                 icon = {
                                     IconOfBottomBar(route = route)
@@ -163,121 +171,165 @@ object Navigation {
                     }
                 }
             ) {
-                val paddingValues = it
-                Box(Modifier.padding(paddingValues)) {
-                    when (currentTab.value) {
-                        Screen.AnalysisScreen.route -> {
-                            AnalysisNavHost(navController = analysisNavController)
+                NavHost(
+                    navController = bottomNavController,
+                    startDestination = ANALYSIS_ROUTE,
+                    modifier = Modifier.padding(it),
+                ) {
+                    navigation(
+                        startDestination = Screen.AnalysisScreen.route,
+                        route = ANALYSIS_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.AnalysisScreen.route,
+                        ) {
+                            AnalysisScreen(
+                                navController = bottomNavController,
+                                viewModel = analysisScreenViewModel,
+                            )
                         }
-                        Screen.AppointmentScreen.route -> {
-                            AppointmentNavHost(navController = appointmentNavController)
+                        composable(
+                            route = Screen.AddAnalysisScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AddAnalysisScreenViewModel>()
+                            AddAnalysisScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                analysisScreenViewModel = analysisScreenViewModel,
+                            )
                         }
-                        Screen.DiaryScreen.route -> {
-                            DiaryNavHost(navController = diaryNavController)
+                        composable(
+                            route = Screen.AnalysisDetailsScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AnalysisDetailsScreenViewModel>()
+                            AnalysisDetailsScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
                         }
-                        Screen.AccountScreen.route -> {
-                            AccountNavHost(navController = accountNavController, authNavController = authNavController)
+                        composable(
+                            route = Screen.EditAnalysisScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<EditAnalysisScreenViewModel>()
+                            EditAnalysisScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
                         }
                     }
+                    navigation(
+                        startDestination = Screen.AppointmentScreen.route,
+                        route = APPOINTMENT_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.AppointmentScreen.route,
+                        ) {
+                            AppointmentsScreen(
+                                navController = bottomNavController,
+                                viewModel = appointmentScreenViewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.AddAppointmentScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AddAppointmentViewModel>()
+                            AddAppointmentScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                appointmentViewModel = appointmentScreenViewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.AppointmentDetailsScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AppointmentDetailsScreenViewModel>()
+                            AppointmentDetailsScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.EditAppointmentScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<EditAppointmentScreenViewModel>()
+                            EditAppointmentScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+
+                    }
+                    navigation(
+                        startDestination = Screen.DiaryScreen.route,
+                        route = DIARY_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.DiaryScreen.route,
+                        ) {
+                            DiaryScreen(
+                                navController = bottomNavController,
+                                viewModel = diaryScreenViewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.AddDiaryEntryScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AddDiaryEntryScreenViewModel>()
+                            AddDiaryEntryScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                diaryScreenViewModel = diaryScreenViewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.DiaryEntryDetailsScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<DiaryEntryDetailsScreenViewModel>()
+                            DiaryEntryDetailsScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                        composable(
+                            route = Screen.EditDiaryEntryScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<EditDiaryEntryScreenViewModel>()
+                            EditDiaryEntryScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                    }
+                    navigation(
+                        startDestination = Screen.AccountScreen.route,
+                        route = ACCOUNT_ROUTE,
+                    ) {
+                        composable(
+                            route = Screen.AccountScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<AccountScreenViewModel>()
+                            viewModel.getUserEmail()
+                            AccountScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                                onNavigateToAuth = { authNavController.navigate(AUTH_ROUTE) }
+                            )
+                        }
+                        composable(
+                            route = Screen.ChangePasswordScreen.route,
+                        ) {
+                            val viewModel = hiltViewModel<ChangePasswordViewModel>()
+                            ChangePasswordScreen(
+                                navController = bottomNavController,
+                                viewModel = viewModel,
+                            )
+                        }
+                    }
+
                 }
             }
         }
     }
-
-    @Composable
-    fun AnalysisNavHost(navController: NavHostController) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.AnalysisScreen.route
-        ) {
-            composable(Screen.AnalysisScreen.route) {
-                val analysisScreenViewModel = hiltViewModel<AnalysisScreenViewModel>()
-                AnalysisScreen(navController = navController, viewModel = analysisScreenViewModel)
-            }
-            composable(Screen.AddAnalysisScreen.route) {
-                val viewModel = hiltViewModel<AddAnalysisScreenViewModel>()
-                AddAnalysisScreen(navController = navController, viewModel = viewModel, analysisScreenViewModel = hiltViewModel())
-            }
-            composable(Screen.AnalysisDetailsScreen.route) {
-                val viewModel = hiltViewModel<AnalysisDetailsScreenViewModel>()
-                AnalysisDetailsScreen(navController = navController, viewModel = viewModel)
-            }
-            composable(Screen.EditAnalysisScreen.route) {
-                val viewModel = hiltViewModel<EditAnalysisScreenViewModel>()
-                EditAnalysisScreen(navController = navController, viewModel = viewModel)
-            }
-        }
-    }
-
-    @Composable
-    fun AppointmentNavHost(navController: NavHostController) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.AppointmentScreen.route
-        ) {
-            composable(Screen.AppointmentScreen.route) {
-                val appointmentScreenViewModel = hiltViewModel<AppointmentsScreenViewModel>()
-                AppointmentsScreen(navController = navController, viewModel = appointmentScreenViewModel)
-            }
-            composable(Screen.AddAppointmentScreen.route) {
-                val viewModel = hiltViewModel<AddAppointmentViewModel>()
-                AddAppointmentScreen(navController = navController, viewModel = viewModel, appointmentViewModel = hiltViewModel())
-            }
-            composable(Screen.AppointmentDetailsScreen.route) {
-                val viewModel = hiltViewModel<AppointmentDetailsScreenViewModel>()
-                AppointmentDetailsScreen(navController = navController, viewModel = viewModel)
-            }
-            composable(Screen.EditAppointmentScreen.route) {
-                val viewModel = hiltViewModel<EditAppointmentScreenViewModel>()
-                EditAppointmentScreen(navController = navController, viewModel = viewModel)
-            }
-        }
-    }
-
-    @Composable
-    fun DiaryNavHost(navController: NavHostController) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.DiaryScreen.route
-        ) {
-            composable(Screen.DiaryScreen.route) {
-                val diaryScreenViewModel = hiltViewModel<DiaryScreenViewModel>()
-                DiaryScreen(navController = navController, viewModel = diaryScreenViewModel)
-            }
-            composable(Screen.AddDiaryEntryScreen.route) {
-                val viewModel = hiltViewModel<AddDiaryEntryScreenViewModel>()
-                AddDiaryEntryScreen(navController = navController, viewModel = viewModel, diaryScreenViewModel = hiltViewModel())
-            }
-            composable(Screen.DiaryEntryDetailsScreen.route) {
-                val viewModel = hiltViewModel<DiaryEntryDetailsScreenViewModel>()
-                DiaryEntryDetailsScreen(navController = navController, viewModel = viewModel)
-            }
-            composable(Screen.EditDiaryEntryScreen.route) {
-                val viewModel = hiltViewModel<EditDiaryEntryScreenViewModel>()
-                EditDiaryEntryScreen(navController = navController, viewModel = viewModel)
-            }
-        }
-    }
-
-    @Composable
-    fun AccountNavHost(navController: NavHostController, authNavController: NavController) {
-        NavHost(
-            navController = navController,
-            startDestination = Screen.AccountScreen.route
-        ) {
-            composable(Screen.AccountScreen.route) {
-                val viewModel = hiltViewModel<AccountScreenViewModel>()
-                viewModel.getUserEmail()
-                AccountScreen(navController = navController, viewModel = viewModel, onNavigateToAuth = { authNavController.navigate(AUTH_ROUTE) })
-            }
-            composable(Screen.ChangePasswordScreen.route) {
-                val viewModel = hiltViewModel<ChangePasswordViewModel>()
-                ChangePasswordScreen(navController = navController, viewModel = viewModel)
-            }
-        }
-    }
-
-
 }
 
 @Composable
