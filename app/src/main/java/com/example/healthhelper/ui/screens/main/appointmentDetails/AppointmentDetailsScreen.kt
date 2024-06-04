@@ -1,4 +1,4 @@
-package com.example.healthhelper.ui.screens.main.analysisDetails
+package com.example.healthhelper.ui.screens.main.appointmentDetails
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,22 +41,29 @@ import com.example.healthhelper.R
 import com.example.healthhelper.core.ResultOfRequest
 import com.example.healthhelper.ui.screens.AlertDialogWarning
 import com.example.healthhelper.ui.screens.Screen
-import com.example.healthhelper.ui.viewModels.AnalysisDetailsScreenViewModel
+import com.example.healthhelper.ui.screens.TextInputDialog
+import com.example.healthhelper.ui.viewModels.AppointmentDetailsScreenViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AnalysisDetailsScreen(
+fun AppointmentDetailsScreen(
     navController: NavController,
-    viewModel: AnalysisDetailsScreenViewModel,
+    viewModel: AppointmentDetailsScreenViewModel,
 ) {
-
     val context = LocalContext.current
 
-    val analysis by viewModel.analysis.collectAsState()
+    val appointment by viewModel.appointment.collectAsState()
 
-    val resultOfDeletionAnalysis = viewModel.resultOfDeletionAnalysis.collectAsState().value
+    val resultOfDeletionAppointment = viewModel.resultOfDeletionAppointment.collectAsState().value
 
-    var openAlertDialog by remember {
+    val resultOfAddingRecommendations =
+        viewModel.resultOfAddingRecommendations.collectAsState().value
+
+    var openAlertDialogWarning by remember {
+        mutableStateOf(false)
+    }
+
+    var openInputTextDialog by remember {
         mutableStateOf(false)
     }
 
@@ -63,7 +71,7 @@ fun AnalysisDetailsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.EditAnalysisScreen.route)
+                    navController.navigate(Screen.EditAppointmentScreen.route)
                 },
             ) {
                 Icon(
@@ -98,7 +106,7 @@ fun AnalysisDetailsScreen(
                     modifier = Modifier
                         .height(32.dp)
                         .width(32.dp),
-                    onClick = { openAlertDialog = true },
+                    onClick = { openAlertDialogWarning = true },
                 ) {
                     Icon(
                         modifier = Modifier
@@ -128,12 +136,12 @@ fun AnalysisDetailsScreen(
                     Text(
                         modifier = Modifier
                             .padding(end = 8.dp),
-                        text = stringResource(id = R.string.name),
+                        text = stringResource(id = R.string.doctor_specialization),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = analysis.name,
+                        text = appointment.doctorSpecialty,
                         fontSize = 20.sp,
                     )
                     Spacer(
@@ -143,57 +151,12 @@ fun AnalysisDetailsScreen(
                     Text(
                         modifier = Modifier
                             .padding(end = 8.dp),
-                        text = stringResource(id = R.string.unit),
+                        text = stringResource(id = R.string.doctor_name),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = analysis.unit,
-                        fontSize = 20.sp,
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        text = stringResource(id = R.string.result),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = analysis.result.toString(),
-                        fontSize = 20.sp,
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        text = stringResource(id = R.string.lowerLimit),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = analysis.lowerLimit.toString(),
-                        fontSize = 20.sp,
-                    )
-                    Spacer(
-                        modifier = Modifier
-                            .height(8.dp),
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 8.dp),
-                        text = stringResource(id = R.string.upperLimit),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = analysis.upperLimit.toString(),
+                        text = appointment.doctorName,
                         fontSize = 20.sp,
                     )
                     Spacer(
@@ -208,44 +171,127 @@ fun AnalysisDetailsScreen(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = analysis.date,
+                        text = appointment.date,
                         fontSize = 20.sp,
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp),
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 8.dp),
+                        text = stringResource(id = R.string.time),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = appointment.time,
+                        fontSize = 20.sp,
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp),
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 8.dp),
+                        text = stringResource(id = R.string.address),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = appointment.address,
+                        fontSize = 20.sp,
+                    )
+                    Spacer(
+                        modifier = Modifier
+                            .height(8.dp),
+                    )
+                    if (appointment.visited) {
+                        Text(
+                            modifier = Modifier
+                                .padding(end = 8.dp),
+                            text = stringResource(id = R.string.recommendations),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            text = appointment.recommendations ?: "",
+                            fontSize = 20.sp,
+                        )
+
+                    }
+                }
+            }
+            if (!appointment.visited) {
+                FilledTonalButton(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    onClick = { openInputTextDialog = true },
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.appointment_took_place),
                     )
                 }
             }
 
-            if (openAlertDialog) {
+            if (openAlertDialogWarning) {
                 AlertDialogWarning(
-                    onDismissRequest = { openAlertDialog = false },
+                    onDismissRequest = { openAlertDialogWarning = false },
                     onConfirmation = {
-                        openAlertDialog = false
+                        openAlertDialogWarning = false
                         viewModel.deleteAnalysis()
                     },
                     dialogTitle = stringResource(id = R.string.warning),
-                    dialogText = stringResource(id = R.string.want_delete_analysis),
+                    dialogText = stringResource(id = R.string.want_delete_appointment),
                 )
             }
 
-            LaunchedEffect(resultOfDeletionAnalysis) {
-                when (resultOfDeletionAnalysis) {
+            if (openInputTextDialog) {
+                TextInputDialog(
+                    onCancel = { openInputTextDialog = false },
+                    onSave = { inputString ->
+                        openInputTextDialog = false
+                        viewModel.addRecommendations(inputString)
+                    }
+                )
+            }
+
+            LaunchedEffect(resultOfDeletionAppointment) {
+                when (resultOfDeletionAppointment) {
                     is ResultOfRequest.Success<Unit> -> {
                         Toast.makeText(
                             context,
-                            context.getString(R.string.successful_deletion_analysis),
+                            context.getString(R.string.successful_deletion_appointment),
                             Toast.LENGTH_SHORT
                         ).show()
-                        navController.navigate(Screen.AnalysisScreen.route)
+                        navController.navigate(Screen.AppointmentScreen.route)
                     }
 
                     is ResultOfRequest.Error -> {
                         Toast.makeText(
                             context,
-                            resultOfDeletionAnalysis.errorMessage,
+                            resultOfDeletionAppointment.errorMessage,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
 
                     is ResultOfRequest.Loading -> {}
+                }
+            }
+
+            LaunchedEffect(resultOfAddingRecommendations) {
+                when (resultOfAddingRecommendations) {
+                    is ResultOfRequest.Error -> {
+                        Toast.makeText(
+                            context,
+                            resultOfAddingRecommendations.errorMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    else -> {}
                 }
             }
         }

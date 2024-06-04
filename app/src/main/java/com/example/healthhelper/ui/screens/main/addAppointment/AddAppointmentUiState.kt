@@ -15,11 +15,12 @@ data class AddAppointmentUiState(
     val pickedTime: LocalTime = LocalTime.now(),
     val formattedTime: String = LocalTime.now().toFormattedTime(),
     val address: String = "",
-    val isVisited: Boolean = false,
+    val visited: Boolean = false,
     val recommendations: String? = null,
     val doctorSpecialtyErrorMessage: Int? = R.string.empty_field,
     val doctorNameErrorMessage: Int? = R.string.empty_field,
     val addressErrorMessage: Int? = R.string.empty_field,
+    val recommendationsErrorMessage: Int? = R.string.empty_field,
 ) {
     fun toAppointment(): Appointment {
         return Appointment(
@@ -28,6 +29,7 @@ data class AddAppointmentUiState(
             date = formattedDate,
             time = formattedTime,
             address = address,
+            recommendations = recommendations,
         )
     }
 }

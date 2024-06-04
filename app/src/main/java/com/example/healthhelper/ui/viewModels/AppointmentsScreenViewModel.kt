@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.healthhelper.data.repository.UserAppointmentsRepository
 import com.example.healthhelper.domain.model.Appointment
-import com.example.healthhelper.presenter.AppointmentsPresenter
+import com.example.healthhelper.presenter.AppointmentsProvider
 import com.example.healthhelper.utils.sortAppointments
 import com.example.healthhelper.utils.toAppointmentUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,10 +38,11 @@ class AppointmentsScreenViewModel @Inject constructor(
                 _appointments.value = appointments.sortAppointments()
             }
         }
+
     }
 
     fun addAppointmentToPresenter(index: Int) {
-        AppointmentsPresenter.setAppointment(appointments.value[index])
+        AppointmentsProvider.setAppointment(appointments.value[index])
     }
 
     fun getAppointmentsSize() = appointments.value.size

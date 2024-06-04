@@ -1,15 +1,23 @@
 package com.example.healthhelper.ui.screens
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import com.example.healthhelper.R
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogState
@@ -130,6 +138,54 @@ fun AlertDialogWarning(
             TextButton(
                 onClick = {
                     onDismissRequest()
+                }
+            ) {
+                Text(stringResource(id = R.string.cancel))
+            }
+        }
+    )
+}
+
+@Composable
+fun TextInputDialog(
+    onSave: (String) -> Unit,
+    onCancel: () -> Unit
+) {
+
+    var textState by remember { mutableStateOf(TextFieldValue()) }
+
+    AlertDialog(
+        onDismissRequest = {
+            onCancel()
+        },
+        title = {
+            Text(text = stringResource(id = R.string.add_recommendations))
+        },
+        text = {
+
+
+            OutlinedTextField(
+                value = textState,
+                onValueChange = { newText ->
+                    textState = newText
+                },
+                label = { Text(stringResource(id = R.string.input_recommendations)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onSave(textState.text)
+                }
+            ) {
+                Text(stringResource(id = R.string.save))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onCancel()
                 }
             ) {
                 Text(stringResource(id = R.string.cancel))

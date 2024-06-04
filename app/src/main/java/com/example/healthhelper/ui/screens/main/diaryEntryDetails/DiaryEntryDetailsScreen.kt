@@ -124,59 +124,48 @@ fun DiaryEntryDetailsScreen(
                     modifier = Modifier
                         .padding(4.dp),
                 ) {
-                    Row {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.heading),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = diaryEntry.heading,
-                            fontSize = 20.sp,
-                        )
-                    }
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 8.dp),
+                        text = stringResource(id = R.string.heading),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = diaryEntry.heading,
+                        fontSize = 20.sp,
+                    )
+
                     Spacer(
                         modifier = Modifier
                             .height(8.dp),
                     )
-                    Row(
+                    Text(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.diary_entry),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = diaryEntry.description,
-                            fontSize = 20.sp,
-                        )
-                    }
+                            .padding(end = 8.dp),
+                        text = stringResource(id = R.string.diary_entry),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = diaryEntry.description,
+                        fontSize = 20.sp,
+                    )
                     Spacer(
                         modifier = Modifier
                             .height(8.dp),
                     )
-                    Row(
+                    Text(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(end = 8.dp),
-                            text = stringResource(id = R.string.date),
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Text(
-                            text = diaryEntry.date,
-                            fontSize = 20.sp,
-                        )
-                    }
+                            .padding(end = 8.dp),
+                        text = stringResource(id = R.string.date),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = diaryEntry.date,
+                        fontSize = 20.sp,
+                    )
                 }
             }
 

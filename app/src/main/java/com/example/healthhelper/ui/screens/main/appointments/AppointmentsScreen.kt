@@ -125,7 +125,7 @@ fun AppointmentCard(
         ),
         onClick = {
             addAppointmentToPresenter(index)
-            //navigateToDetails(Screen..route)
+            navigateToDetails(Screen.AppointmentDetailsScreen.route)
         }
     ) {
         Row(

@@ -8,7 +8,7 @@ data class Appointment(
     val date: String = "",
     val time: String = "",
     val address: String = "",
-    val isVisited: Boolean = false,
+    val visited: Boolean = false,
     val recommendations: String? = null,
     val index: Int = 0,
 ) {
@@ -17,7 +17,7 @@ data class Appointment(
             doctorSpecialty = doctorSpecialty,
             date = date,
             time = time,
-            isVisited = isVisited,
+            isVisited = visited,
         )
     }
 }

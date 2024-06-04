@@ -86,4 +86,14 @@
     <string name="input_doctor_name">Введите ФИО врача</string>
     <string name="input_address">Введите адрес клиники</string>
     <string name="icon_watch">Иконка часов</string>
+    <string name="doctor_specialization">Специализация врача</string>
+    <string name="doctor_name">ФИО врача</string>
+    <string name="time">Время</string>
+    <string name="address">Адрес</string>
+    <string name="recommendations">Рекомендации</string>
+    <string name="want_delete_appointment">Вы точно хотите удалить данный прием?</string>
+    <string name="successful_deletion_appointment">Прием успешно удален!</string>
+    <string name="appointment_took_place">Прием состоялся</string>
+    <string name="add_recommendations">Добавить рекомендации врача</string>
+    <string name="input_recommendations">Введите рекомендации</string>
 </resources>

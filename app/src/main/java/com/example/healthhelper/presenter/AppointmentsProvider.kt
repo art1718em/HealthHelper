@@ -4,7 +4,7 @@ import com.example.healthhelper.domain.model.Appointment
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-object AppointmentsPresenter {
+object AppointmentsProvider {
 
     private val _appointment = MutableStateFlow(Appointment())
     val appointment = _appointment.asStateFlow()
