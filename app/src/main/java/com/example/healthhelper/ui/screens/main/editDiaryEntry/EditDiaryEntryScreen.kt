@@ -163,6 +163,7 @@ fun EditDiaryEntryScreen(
         DateMaterialDialog(
             dateDialogState = dateDialogState,
             updateData = viewModel::updateDate,
+            isFutureDate = false,
         )
     }
 

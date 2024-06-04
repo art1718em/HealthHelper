@@ -101,6 +101,7 @@ fun AddDiaryEntryScreen(
             onValueChange = {
                 viewModel.updateDescription(description = it)
             },
+            minLines = 2,
             label = {
                 Text(
                     text = stringResource(id = R.string.input_diary_entry),
@@ -166,6 +167,7 @@ fun AddDiaryEntryScreen(
         DateMaterialDialog(
             dateDialogState = dateDialogState,
             updateData = viewModel::updateDate,
+            isFutureDate = false,
         )
     }
 

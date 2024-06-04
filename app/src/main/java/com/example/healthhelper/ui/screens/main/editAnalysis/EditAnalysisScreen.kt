@@ -254,7 +254,11 @@ fun EditAnalysisScreen(
             )
         }
     }
-    DateMaterialDialog(dateDialogState = dateDialogState, updateData = viewModel::updateDate)
+    DateMaterialDialog(
+        dateDialogState = dateDialogState,
+        updateData = viewModel::updateDate,
+        isFutureDate = false,
+    )
 
     LaunchedEffect(resultOfEditingAnalysis) {
         when (resultOfEditingAnalysis) {

@@ -32,6 +32,7 @@ import java.time.LocalTime
 fun DateMaterialDialog(
     dateDialogState: MaterialDialogState,
     updateData: (localDate: LocalDate) -> Unit,
+    isFutureDate: Boolean,
 ) {
     MaterialDialog(
         dialogState = dateDialogState,
@@ -50,7 +51,11 @@ fun DateMaterialDialog(
             title = stringResource(id = R.string.select_date),
             initialDate = LocalDate.now(),
             allowedDateValidator = {
-                it <= LocalDate.now()
+                if (!isFutureDate) {
+                    it <= LocalDate.now()
+                } else {
+                    true
+                }
             },
             colors = DatePickerDefaults.colors(
                 headerBackgroundColor = MaterialTheme.colorScheme.primary,
@@ -169,6 +174,7 @@ fun TextInputDialog(
                 onValueChange = { newText ->
                     textState = newText
                 },
+                minLines = 2,
                 label = { Text(stringResource(id = R.string.input_recommendations)) },
                 modifier = Modifier.fillMaxWidth()
             )

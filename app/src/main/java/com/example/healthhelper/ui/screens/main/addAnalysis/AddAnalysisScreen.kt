@@ -257,7 +257,11 @@ fun AddAnalysisScreen(
             )
         }
     }
-    DateMaterialDialog(dateDialogState = dateDialogState, updateData = viewModel::updateDate)
+    DateMaterialDialog(
+        dateDialogState = dateDialogState,
+        updateData = viewModel::updateDate,
+        isFutureDate = false,
+    )
 
     LaunchedEffect(resultOfRequest) {
         when (resultOfRequest) {

@@ -250,8 +250,15 @@ fun EditAppointmentScreen(
             )
         }
     }
-    DateMaterialDialog(dateDialogState = dateDialogState, updateData = viewModel::updateDate)
-    TimeMaterialDialog(timeDialogState = timeDialogState, updateData = viewModel::updateTime)
+    DateMaterialDialog(
+        dateDialogState = dateDialogState,
+        updateData = viewModel::updateDate,
+        isFutureDate = false,
+    )
+    TimeMaterialDialog(
+        timeDialogState = timeDialogState,
+        updateData = viewModel::updateTime,
+    )
 
     LaunchedEffect(resultOfRequest) {
         when (resultOfRequest) {
